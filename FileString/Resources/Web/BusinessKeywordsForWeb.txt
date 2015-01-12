@@ -1,0 +1,11 @@
+*** Settings ***
+Library           Selenium2Library
+
+*** Keywords ***
+fsweb_openBrowserAndSetOptions
+
+fsweb_Open Optional Browser And Set Selenium Speed
+    [Arguments]    ${v_baseUrl}    ${v_browser}    ${v_seleniumSpeed}
+    Open Browser    ${v_baseUrl}    ${v_browser}
+    Maximize Browser Window
+    Set Selenium Timeout    ${v_seleniumSpeed}

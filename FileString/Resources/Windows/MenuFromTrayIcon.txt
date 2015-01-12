@@ -1,0 +1,270 @@
+*** Settings ***
+Resource          CommonKeywordsInWindows.txt
+
+*** Variables ***
+${v_menuFromTrayIconDataFile}    ${CURDIR}/../../DataSet/Windows/MenuFromTrayIcon.xlsx
+
+*** Keywords ***
+fswin_Verify All Elements Of Tray Menu
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSLogoExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[1]}
+    Run Keyword If    ${v_isFSLogoExist}==False    Fail    Could not find FileString logo in tray menu
+    ${v_isFSVersionExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[2]}
+    Run Keyword If    ${v_isFSVersionExist}==False    Fail    Could not find FileString version in tray menu
+    ${v_isSettingButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[3]}
+    Run Keyword If    ${v_isSettingButtonExist}==False    Fail    Could not find "Settings" button in tray menu
+    ${v_isRecentSentFilesExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[5]}
+    Run Keyword If    ${v_isRecentSentFilesExist}==False    Fail    Could not find Menu Recent Sent Files in tray menu
+    ${v_isRecentRecievedFilesExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[6]}
+    Run Keyword If    ${v_isRecentRecievedFilesExist}==False    Fail    Could not find Menu Recent Received Files in tray menu
+    ${v_isFSFolerIconExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[7]}
+    Run Keyword If    ${v_isFSFolerIconExist}==False    Fail    Could not find FileString Folder Icon in tray menu
+    ${v_isFSWebsiteExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[8]}
+    Run Keyword If    ${v_isFSWebsiteExist}==False    Fail    Could not find FileString Website link in tray menu
+
+fswin_Verify All Elements Of Menu Setting
+    [Arguments]    ${v_libName}=Remote
+    ${v_isDeviceSettingExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[2]}
+    Run Keyword If    ${v_isDeviceSettingExist}==False    Fail    Could not find Device Settings in menu setting
+    ${v_isYourPreferencesExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[3]}
+    Run Keyword If    ${v_isYourPreferencesExist}==False    Fail    Could not find Your Preferences in menu setting
+    ${v_isHelpCenterExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[4]}
+    Run Keyword If    ${v_isHelpCenterExist}==False    Fail    Could not find Help Center in menu setting
+    ${v_isFSTourExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[5]}
+    Run Keyword If    ${v_isFSTourExist}==False    Fail    Could not find FileString Tour in menu setting
+    ${v_isQuitAppExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[6]}
+    Run Keyword If    ${v_isQuitAppExist}==False    Fail    Could not find Quit Application in menu setting
+
+fswin_Verify All Elements In Device Settings
+    [Arguments]    ${v_libName}=Remote
+    Comment    Verify Your Account text
+    ${v_isYourAccountTextExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isYourAccountTextExist}==False    Fail    Your Account text did not appear
+    Comment    Verify Account Name
+    ${v_isYourAccountInformationExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[1]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isYourAccountInformationExist}==False    Fail    Your Account's Firstname, lastname and email address did not appear
+    Comment    Verify Computer name text
+    ${v_isComputerNameExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isComputerNameExist}==False    Fail    Computer name text did not appear
+    Comment    Verify Computer name
+    ${v_isComputerNameExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isComputerNameExist}==False    Fail    Your computer name did not appear
+    Comment    Unlink button
+    ${v_isUnlinkButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[4]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isUnlinkButtonExist}==False    Fail    Unlink button did not appear
+    Comment    Verify Folder location text
+    ${v_isFolderLocationTextExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFolderLocationTextExist}==False    Fail    Folder Locaiton text did not appear
+    Comment    Verify FileString Folder location
+    ${v_isFolderLocationTextExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[6]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFolderLocationTextExist}==False    Fail    FileString Folder location did not appear
+    Comment    Verify Browse... button
+    ${v_isBrowseButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[7]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isBrowseButtonExist}==False    Fail    Browse... button did not appear
+    Comment    Verify Start File String on system startup checkbox
+    ${v_isStartFSOnSystemExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[8]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isStartFSOnSystemExist}==False    Fail    Start File String on system startup checkbox did not appear
+    Comment    Verify Start File String on system startup text
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[9]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Start File String on system startup text did not appear
+    Comment    Verify Allow FileString to access your contacts checkbox
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[10]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Allow FileString to access your contacts checkbox did not appear
+    Comment    Verify Allow FileString to access your contacts text
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[11]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Allow FileString to access your contacts text did not appear
+    Comment    Verify Show desktop notifications checkbox
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[12]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Show desktop notifications checkbox did not appear
+    Comment    Verify Show desktop notifications text
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[13]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Show desktop notifications text did not appear
+    Comment    Verify Show the FileString tour each time a received file is closed checkbox
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[14]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Show the FileString tour each time a received file is closed checkbox did not appear
+    Comment    Verify Show the FileString tour each time a received file is closed text
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[15]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Show the FileString tour each time a received file is closed text did not appear
+    Comment    Verify OK button
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[16]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    OK button did not appear
+    Comment    Verify Cancel button
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[17]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Cancel button did not appear
+
+fswin_Verify FileString Tour Is Opened
+    ${v_isOpenFSTourExist}=    Rn Wait For Element Exist    ${gmwin_fileStringTour[0]}
+    Run Keyword If    ${v_isOpenFSTourExist}==False    Fail    FileString tour is not opened
+
+fswin_Verify All Elements In Your Preferences
+    Comment    Your Preferences form
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[0]}    5000    Your preferences form did not appear
+    Comment    Your Time Zone title
+    Comment    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[1]}    5000    Your Time Zone title did not appear
+    Comment    Time zone combobox
+    Comment    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[2]}    5000    Time zone combobox did not appear
+    Comment    Sharing Defaults text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[3]}    5000    Sharing Defaults text did not appear
+    Comment    By default, when I share files: text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[4]}    5000    By default, when I share files: text did not appear
+    Comment    Set access rights to: text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[5]}    5000    Set access rights to: text did not appear
+    Comment    Set access rights to combobox
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[6]}    5000    Set access rights to combobox did not appear
+    Comment    Allow Printing checkbox
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[7]}    5000    Allow Printing checkbox did not appear
+    Comment    Add a watermark checkbox
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[8]}    5000    Add a watermark checkbox did not appear
+    Comment    Other Notifications title
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[9]}    5000    Other Notifications title did not appear
+    Comment    Notify me when... text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[10]}    5000    Notify me when... text did not appear
+    Comment    My files are re-shared checkbox
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[11]}    5000    My files are re-shared checkbox did not appear
+    Comment    Another user revokes a recipient's access to a file I own checkbox
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[12]}    5000    Another user revokes a recipient's access to a file I own checkbox did not appear
+    Comment    A recipient's access to files I own expires checkbox
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[13]}    5000    A recipient's access to files I own expires checkbox did not appear
+    Comment    View Notifications title
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[14]}    5000    View Notifications title did not appear
+    Comment    Notify me when my files are viewed by... text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[15]}    5000    Notify me when my files are viewed by... text did not appear
+    Comment    Direct Recipients: text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[16]}    5000    Direct Recipients: text not appear
+    Comment    Direct Recipients - Every view radio button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[17]}    5000    Direct Recipients - Every view radio button did not appear
+    Comment    Direct Recipients - First View radio button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[18]}    5000    Direct Recipients - First View radio button did not appear
+    Comment    Direct Recipients - Never radio button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[19]}    5000    Direct Recipients - Never radio button did not appear
+    Comment    Downstream Recipients: text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[20]}    5000    Downstream Recipients: text did not appear
+    Comment    Downstream Recipients - Every View radio button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[21]}    5000    Downstream Recipients - Every View radio button did not appear
+    Comment    Downstream Recipients - First view radio button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[22]}    5000    Downstream Recipients - First view radio button did not appear
+    Comment    Downstream Recipients - Never radio button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[23]}    5000    Downstream Recipients - Never radio button did not appear
+    Comment    Printing Notifications title
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[24]}    5000    Printing Notifications title did not appear
+    Comment    Notify me when my files are printed by... text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[25]}    5000    Notify me when my files are printed by... text did not appear
+    Comment    Direct Recipients: text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[26]}    5000    Direct Recipients: text did not appear
+    Comment    Direct Recipients - Every Time
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[27]}    5000    Direct Recipients - Every Time did not appear
+    Comment    Direct Recipients - First Time
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[28]}    5000    Direct Recipients - First Time did not appear
+    Comment    Direct Recipients - Never
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[29]}    5000    Direct Recipients - Never did not appear
+    Comment    Downstream Recipients: text
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[30]}    5000    Downstream Recipients: text did not appear
+    Comment    Downstream Recipients - Every Time
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[31]}    5000    Downstream Recipients - Every Time did not appear
+    Comment    Downstream Recipients - First Time
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[32]}    5000    Downstream Recipients - First Time did not appear
+    Comment    Downstream Recipients - Never
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[33]}    5000    Downstream Recipients - Never did not appear
+    Comment    OK button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[34]}    5000    OK button did not appear
+    Comment    Cancel button
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_yourPreferences[35]}    5000    Cancel button form did not appear
+
+fswin_Verify Help Center Is Opened
+    ${v_isWebOpened}=    Rn Wait For Element Exist    ${gmwin_helpCenterChromeForm[0]}    30000
+    Run Keyword If    ${v_isWebOpened}==False    Fail    Help Center website did not opened
+    Run Keyword If    ${v_isWebOpened}==True    Rn Click Element    ${gmwin_helpCenterChromeForm[1]}
+
+fswin_Verify Sync Status Of Sent And Received Files
+    [Arguments]    ${v_libName}=Remote
+    Comment    Synced x of x... (time)
+    ${v_isBeingSyncedExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[10]}    300000
+    Run Keyword If    ${v_isBeingSyncedExist}==False    Fail    FS could not connect to server or this account did not contain any file
+
+fswin_Verify Change Status
+    [Arguments]    ${v_libName}=Remote
+    Comment    If Checking... exist verify both rest elements (Being synced and Synced)
+    ${v_isCheckingExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[9]}    1000
+    Run Keyword If    ${v_isCheckingExist}==True    fswin_Verify Change Status Of Being Synced    ${v_libName}
+    fswin_Verify Change Status Of Synced    ${v_libName}
+
+fswin_Verify Change Status Of Being Synced
+    [Arguments]    ${v_libName}=Remote
+    Comment    Synced x of x... (time)
+    ${v_isBeingSyncedExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[10]}    120000
+    Comment    Synced
+    ${v_isSyncedExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[4]}    600000
+    Run Keyword If    ${v_isBeingSyncedExist}==False and ${v_isSyncedExist}==False    Fail    The states Being Synced (Synced x of x files) or Synced did not appear
+
+fswin_Verify Change Status Of Synced
+    [Arguments]    ${v_libName}=Remote
+    Comment    Synced
+    ${v_isSyncedExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[4]}    600000
+    Run Keyword If    ${v_isSyncedExist}==False    Fail    The state Synced did not appear
+
+fswin_Compare Image In X Time
+    [Arguments]    ${v_elementLocator}    ${v_pathToBasedImage}    ${v_maxTimes}    ${v_libName}=Remote
+    : FOR    ${v_index}    IN RANGE    0    ${v_maxTimes}
+    \    ${v_pathToTempImage}=    Generate Random String    20    [LOWER]
+    \    ${v_pathToTempImage}    Catenate    SEPARATOR=    ${v_pathToTempImage}    .jpg
+    \    Run Keyword    ${v_libName}.Rn Get Image    ${v_elementLocator}    ${CURDIR}/../../DataSet/Windows/temp/${v_pathToTempImage}
+    \    ${v_result}=    Run Keyword    ${v_libName}.Rn Compare Two Images Using Ranorex    ${CURDIR}/../../DataSet/Windows/temp/${v_pathToTempImage}    ${v_pathToBasedImage}    0.9
+    \    Run Keyword If    ${v_result}==True    Exit For Loop    ELSE    Sleep    2s
+    Run Keyword If    ${v_result}==False    Fail    2 images are different
+
+fswin_Verify Menu From Tray Icon
+
+fswin_Click Setting Button At Menu From Tray Icon
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==False    Fail    Setting button on menu from tray icon did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_menuFromTrayIcon[3]}
+
+fswin_Verify Menu From Tray Icon Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isMenuFromTrayIconExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isMenuFromTrayIconExist}==False    Fail    Menu from tray icon is not opened
+
+fswin_Verify Version Of Build Released
+    [Arguments]    ${v_buildNumber}    ${v_libName}=Remote
+    ${v_isVersionBuildReleasedExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isVersionBuildReleasedExist}==False    Fail    Version of build released is not exist in menu from tray icon
+    ${v_buildNumber}=    Catenate    FileString    ${v_buildNumber}
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be    ${gmwin_menuFromTrayIcon[2]}    ${v_buildNumber}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Incorrect version of build released, the error was: "${v_result[1]}"
+
+fswin_Double Click FileString Icon At System Tray
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==False    Fail    FileString icon at system tray did not exist
+    Run Keyword    ${v_libName}.Rn Double Click Element    ${gmwin_systemTray[0]}
+
+fswin_Verify UI of Tray Icon
+    [Arguments]    ${v_imageFileName}
+    Comment    Get path of source image file (to compare)
+    ${v_pathToFSIconImage}=    Join Path    ${CURDIR}/../../DataSet/Windows/Images    ${v_imageFileName}
+    ${v_result}=    Run Keyword And Ignore Error    fswin_Compare Image In X Time    ${gmwin_systemTray[0]}    ${v_pathToFSIconImage}    5
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    UI of Tray Icon is incorrect
+
+fswin_Click Open FileString Folder icon In Menu From Tray Icon
+    [Arguments]    ${v_libName}=Remote
+    ${v_isOpenFSFolderExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[7]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isOpenFSFolderExist}==False    Fail    Open FileString Folder menu item is not exist in Menu From Tray Icon
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_menuFromTrayIcon[7]}
+
+fswin_Click FileString Tour Item In Setting Menu
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSTourExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSTourExist}==False    Fail    FileString Tour menu item is not exist in Setting menu
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuFromSettingButton[5]}
+
+fswin_Click Your Preferences In Menu Setting
+    [Arguments]    ${v_libName}=Remote
+    ${v_isYourPreferencesExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isYourPreferencesExist}==False    Fail    Your Preferences menu item is not exist in menu setting
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuFromSettingButton[3]}
+
+fswin_verifyElementExistAndShowMessageLog
+    [Arguments]    ${v_elementLocator}    ${v_timeOut}    ${v_errorMessage}    ${v_libName}=Remote
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${v_elementLocator}    ${v_timeOut}
+    Run Keyword If    ${v_isExist}==False    Fail    ${v_errorMessage}

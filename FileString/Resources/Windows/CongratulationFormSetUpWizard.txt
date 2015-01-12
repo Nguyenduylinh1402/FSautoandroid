@@ -1,0 +1,100 @@
+*** Settings ***
+Resource          BusinessKeywordsInWindows.txt
+Resource          SignUpKeywords.txt
+Resource          ../CommonKeywordsForAllPlatforms.txt
+
+*** Variables ***
+${v_congratulationFormSetUpWizardDataFile}    ${CURDIR}/../../DataSet/Windows/CongratulationFormSetUpWizard.xlsx
+
+*** Keywords ***
+fswin_Verify All Items Have Been Selected
+    [Arguments]    ${v_libName}=Remote
+    : FOR    ${v_index}    IN RANGE    2    5
+    \    ${v_indexTemp}=    Evaluate    str(${v_index})
+    \    ${v_elementLocator}=    Replace String    ${gmwin_congratulationScreen[15]}    <<index>>    ${v_indexTemp}
+    \    ${v_result}=    Run Keyword    ${v_libName}.Rn Check    ${v_elementLocator}
+    \    Run Keyword If    ${v_result}==False    Fail    Item has index: ${v_index} has not been checked
+
+fswin_Select Some Items To Open
+    [Arguments]    ${v_numberOfItems}    ${v_libName}=Remote
+    : FOR    ${v_index}    IN RANGE    3    ${v_numberOfItems}+3
+    \    ${v_indexTemp}=    Evaluate    str(${v_index})
+    \    ${v_elementLocator}=    Replace String    ${gmwin_congratulationScreen[15]}    <<index>>    ${v_indexTemp}
+    \    Run Keyword    ${v_libName}.Rn Check    ${v_elementLocator}
+
+fswin_Wait For All Fles Downloaded In Congratulation Screen
+    Comment    Wait 5 minutes for all files have been downloaded
+    Sleep    3s
+    Wait Until Keyword Succeeds    10 min    5 sec    fswin_Verify Progress Bar Is Invisible
+
+fswin_Select All Items In Congratulation Screen
+    [Arguments]    ${v_libName}=Remote
+    ${v_result}=    Run Keyword And Return Status    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[6]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_result}==False    Fail    Application dit not load files on server
+    Run Keyword    ${v_libName}.Rn Check    ${gmwin_congratulationScreen[6]}
+
+fswin_Get Second Item Locator
+    [Arguments]    ${v_libName}=Remote
+    ${v_secondItem}=    Replace String    ${gmwin_congratulationScreen[15]}    <<index>>    3
+    ${v_result}=    Run Keyword And Return Status    ${v_libName}.Rn Wait For Element Exist    ${v_secondItem}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_result}==False    Fail    Application did not load files on server
+    [Return]    ${v_secondItem}
+
+fswin_Click Next Button
+    [Arguments]    ${v_libName}=Remote
+    ${v_isNextButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[11]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isNextButtonExist}==False    Fail    Next button is not exist in Congratulation Screen
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_congratulationScreen[11]}
+
+fswin_Select Open Received Files...
+    [Arguments]    ${v_libName}=Remote
+    ${v_isOpenReceivedFilesExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isOpenReceivedFilesExist}==False    Fail    Open received files... is not exist in Congratulation Screen
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_congratulationScreen[5]}
+
+fswin_Veirfy Next Button Is Disabled
+    [Arguments]    ${v_libName}=Remote
+    ${v_isNextButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[11]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isNextButtonExist}==False    Next button is not exist in Congratulation Screen
+    ${v_isNextButtonEnabled}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${gmwin_congratulationScreen[11]}    Enabled
+    Run Keyword If    ${v_isNextButtonEnabled}==True    Fail    Next button is enabled while exptecting disabled
+
+fswin_Veirfy Next Button Is Enabled
+    [Arguments]    ${v_libName}=Remote
+    ${v_isNextButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[11]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isNextButtonExist}==False    Next button is not exist in Congratulation Screen
+    ${v_isNextButtonEnabled}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${gmwin_congratulationScreen[11]}    Enabled
+    Run Keyword If    ${v_isNextButtonEnabled}==False    Fail    Next button is disabled while exptecting enabled
+
+fswin_Select Second Item
+    [Arguments]    ${v_libName}=Remote
+    Comment    Get second item locator
+    ${v_secondItem}=    fswin_Get Second Item Locator    ${v_libName}
+    Comment    Check on second item
+    Run Keyword    ${v_libName}.Rn Check    ${v_secondItem}
+
+fswin_Verify No Received File Exist
+    [Arguments]    ${v_expectedText}    ${v_libName}=Remote
+    ${v_isHightLightTextExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[12]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isHightLightTextExist}==False    Fail    No Received Files is not exist in Congratulation Screen
+    ${v_result}=    Run Keyword And Ignore Error    Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_congratulationScreen[12]}    ${v_expectedText}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Hight Light text in Congratulation Screen is incorrect. The error was: "${v_result[1]}"
+
+fswin_Verify Progress Bar Is Invisible
+    [Arguments]    ${v_libName}=Remote
+    ${v_isProgressBarExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[14]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isProgressBarExist}==False    Fail    Progress-bar is not exist in Congratulation Screen
+    ${v_isProgressBarVisible}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${gmwin_congratulationScreen[14]}    Visible
+    Run Keyword If    ${v_isProgressBarVisible}==True    Fail    Progress-bar is visible while being expected invisible
+
+fswin_Verify Progress Bar Is Visible
+    [Arguments]    ${v_libName}=Remote
+    ${v_isProgressBarExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[14]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isProgressBarExist}==False    Fail    Progress-bar is not exist in Congratulation Screen
+    ${v_isProgressBarVisible}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${gmwin_congratulationScreen[14]}    Visible
+    Run Keyword If    ${v_isProgressBarVisible}==False    Fail    Progress-bar is invisible while being expected visible
+
+fswin_Verify Progressbar When All Files Downloaded
+    [Arguments]    ${v_libName}=Remote
+    ${v_result}=    Run Keyword And Ignore Error    Wait Until Keyword Succeeds    10 min    5s    fswin_Verify Progress Bar Is Invisible    ${v_libName}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Progress bar is not disappear after all files have been downloaded

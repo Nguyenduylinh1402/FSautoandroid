@@ -1,0 +1,96 @@
+*** Settings ***
+Resource          CommonKeywordsInWindows.txt
+Resource          Quit_UnlinkApplication.txt
+Resource          BusinessKeywordsInWindows.txt
+
+*** Variables ***
+${v_signInDataFile}    ${CURDIR}/../../DataSet/Windows/SignIn.xlsx
+
+*** Keywords ***
+fswin_template_Can Not Sign In
+    [Arguments]    ${v_emailAddress}    ${v_password}    ${v_errorMessage}    ${v_libName}=Remote
+    fswin_Input Email Address    ${v_emailAddress}    ${v_libName}
+    fswin_Verify Email Address    ${v_emailAddress}    ${v_libName}
+    fswin_Input Password    ${v_password}    ${v_libName}
+    fswin_Click Sign In    ${v_libName}
+    fswin_Verify Error Message At Sign In Screen    ${v_errorMessage}    ${v_libName}
+
+fswin_Sign In Successful
+    [Arguments]    ${v_emailAddress}    ${v_password}    ${v_libName}=Remote
+    fswin_Input Email Address    ${v_emailAddress}    ${v_libName}
+    fswin_Input Password    ${v_password}    ${v_libName}
+    fswin_Click Sign In    ${v_libName}
+    fswin_Verify After Sign In Successful    ${v_libName}
+
+fswin_Input Email Address
+    [Arguments]    ${v_emailAddress}    ${v_libName}=Remote
+    #    Verify element and input email address
+    ${v_emailAddressTextfieldExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signInScreen[4]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_emailAddressTextfieldExist}==False    Fail    Email address textfield did not exist in 'Sign In' screen
+    Run Keyword    ${v_libName}.Rn Input Text    ${gmwin_signInScreen[4]}    ${v_emailAddress}
+
+fswin_Verify Email Address
+    [Arguments]    ${v_emailAddress}    ${v_libName}=Remote
+    #    Verify email address has been inputed
+    ${v_passOrFail}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be    ${gmwin_signInScreen[4]}    ${v_emailAddress}
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL'    Fail    Email address has not been inputed or input incorrect value. The error was "${v_passOrFail[1]}"
+
+fswin_Input Password
+    [Arguments]    ${v_password}    ${v_libName}=Remote
+    #    Verify element and input password
+    ${v_isPasswordTextfieldExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signInScreen[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isPasswordTextfieldExist}==False    Fail    Password textfield did not exist in 'Sign In' screen
+    Run Keyword    ${v_libName}.Rn Input Text    ${gmwin_signInScreen[5]}    ${v_password}
+
+fswin_Click Sign In
+    [Arguments]    ${v_libName}=Remote
+    #    Verify element and click Sign In button
+    ${v_isSignInButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signInScreen[8]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isSignInButtonExist}==False    Fail    Sign In button did not exist in 'Sign In' screen
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_signInScreen[8]}
+
+fswin_Verify After Sign In Successful
+    [Arguments]    ${v_libName}=Remote
+    #    Wait for congratulation form or FS icon at system tray (successfully sign in)
+    ${v_passOrFail}=    Run Keyword And Ignore Error    Wait Until Keyword Succeeds    30s    1s    fswin_Wait Until Sign In Successful    ${v_libName}
+    #    If they did not exist, check error message exist
+    ${v_isErrorMessageExist}=    Run Keyword If    '${v_passOrFail[0]}'=='FAIL'    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signInScreen[9]}    50    ELSE
+    ...    Set Variable    ${False}
+    #    If error message exist, get error message and show fail message
+    ${v_message}=    Run Keyword If    '${v_passOrFail[0]}'=='FAIL' and ${v_isErrorMessageExist}==True    Run Keyword    ${v_libName}.Rn Get Text    ${gmwin_signInScreen[9]}    ELSE
+    ...    Set Variable    ${EMPTY}
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL' and '${v_message}'!=''    Fail    FileString could not sign in after 30 seconds, error message is: "${v_message}"
+    #    If error message did not exist, show fail message without error message
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL' and '${v_message}'==''    Fail    FileString could not sign in after 30 seconds
+
+fswin_Verify Error Message At Sign In Screen
+    [Arguments]    ${v_errorMessage}    ${v_libName}=Remote
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_signInScreen[9]}    ${v_errorMessage}    ${v_timeOutInWindows}
+
+fswin_Wait Until Sign In Successful
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCongratulationFormExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[0]}    100
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    100
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==False and ${v_isCongratulationFormExist}==False    Fail    FileString is currently not Signed In
+
+fswin_Verify Sign In Screen Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSSignInFormExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signInScreen[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSSignInFormExist}==False    Fail    FileString Sign In form is not opened
+
+fswin_Verify Sign In Successful
+    [Arguments]    ${v_emailAddress}    ${v_libName}=Remote
+    fswin_Click FileString Icon At System Tray    ${v_libName}
+    fswin_Verify Menu From Tray Icon Is Opened    ${v_libName}
+    fswin_Click Setting Button At Menu From Tray Icon    ${v_libName}
+    fswin_Verify Context Menu From Setting Button Is Opened    ${v_libName}
+    fswin_Click Device Setting At Context Menu From Setting Button    ${v_libName}
+    fswin_Verify Device Settings Is Opened    ${v_libName}
+    fswin_Verify Your Account Text At Device Settings Form Contain Email Address    ${v_emailAddress}    ${v_libName}
+    fswin_Close Device Settings Form    ${v_libName}
+
+fswin_Sign In
+    [Arguments]    ${v_emailAddress}    ${v_password}    ${v_libName}=Remote
+    fswin_Input Email Address    ${v_emailAddress}    ${v_libName}
+    fswin_Input Password    ${v_password}    ${v_libName}
+    fswin_Click Sign In    ${v_libName}

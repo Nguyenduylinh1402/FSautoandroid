@@ -1,0 +1,143 @@
+*** Settings ***
+Suite Setup       Run Keywords    Import Library    Remote    127.0.0.1:8270    AND    Import Library    Remote
+...               ${v_ipPortMachine2}    WITH NAME    ${v_libNameMachine2}    AND    fs_loadDataInFirstSheet    ${v_shareNewFileDataFile}    AND
+...               fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}    AND
+...               fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    Run Keyword If    '${v_currentScreen}'=='1'    fswin_Close Congratulation Form    AND    fswin_Wait For FileString Is Synced
+...               AND    fswin_Start Application    ${v_pathToApplicationOnMachine2}    ${v_libNameMachine2}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[4]}
+...               ${v_dataInFirstSheet[5]}    ${v_libNameMachine2}    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    ${v_libNameMachine2}    AND    Run Keyword If
+...               '${v_currentScreen}'=='1'    fswin_Close Congratulation Form    ${v_libNameMachine2}
+Suite Teardown    Run Keywords    fswin_Capture Screen Shoot If Fail    AND    fswin_Verify FileString Icon At System Tray And Unlink    AND    fswin_Quit Application    AND
+...               fswin_Verify FileString Icon At System Tray And Unlink    ${v_libNameMachine2}    AND    fswin_Quit Application    ${v_libNameMachine2}
+Test Setup        Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_shareNewFileDataFile}
+Test Teardown     Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+Resource          ../../Resources/Windows/ShareNewFile.txt
+Resource          ../../resources/windows/SignInKeywords.txt
+Resource          ../../Resources/Windows/OpenAndViewFileFcs.txt
+Resource          ../../Resources/Windows/ContextMenuOfFCSFile.txt
+Resource          ../../Resources/Windows/PropertiesOfSentFiles.txt
+
+*** Test Cases ***
+fs[1950]_Share file with Capital Extension
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1952]_Share file when file is opening
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1954]_Share file to un-existed user
+    #    Share file and verify in machine A
+    fswin_Generate An Email Address
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_emailAddressGenerated}
+
+fs[1956]_Share file to un-verify secondary email
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+
+fs[1958]_Share file to verified secondary email
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1962]_Share file to many recipients
+    Log    Share file and verify in machine A
+    ${v_listOfRecipients}=    fswin_Generate X Email Address    50
+    Append To List    ${v_listOfRecipients}    ${v_dataInFirstSheet[4]}
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_listOfRecipients}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1964]_Share file has large dimension
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[8554]_Share file has small dimension
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1966]_Share a large file >= 100MB
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    1800000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    1800000    ${v_libNameMachine2}
+
+fs[1981]_Share from outside FS Folder with Copy to FS folder and Share
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1983]_Share from outside FS Folder with Move to FS folder and Share
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1985]_Share from inside FS folder with context menu FileString - String this file
+    #    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    #    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+
+fs[1988]_Can Not share protected file
+    #    Generate a recipient
+    fswin_Generate An Email Address
+    #    String a File
+    fswin_Open FileString Folder
+    fswin_Copy File    ${v_pathOfFileTypeUnsupportedFolder}/${v_data[0]}    ${v_fsLocation}
+    fswin_Search A File And Right Click    FileString    ${v_data[0]}    ${v_fsLocation}
+    fswin_Select FileString On Context Menu When Right Click On A File
+    fswin_Select String This File
+    fswin_Click Continue Button When PDF Tron Is Down
+    fswin_Input Recipients And Click Send Button    ${v_emailAddressGenerated}
+    fswin_Click Continue If File Is PPT Or PPTX    ${v_data[0]}
+    fswin_Verify Error Message When String Protected File    ${v_data[1]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Close Error Message When String Protected File    fswin_Close Send A File Popup    fswin_Close FileString Folder
+
+fs[1992]_Can Not share 0KB file
+    #    Generate a recipient
+    fswin_Generate An Email Address
+    #    String a File
+    fswin_Open FileString Folder
+    fswin_Copy File    ${v_pathOfFileTypeUnsupportedFolder}/${v_data[0]}    ${v_fsLocation}
+    fswin_Search A File And Right Click    FileString    ${v_data[0]}    ${v_fsLocation}
+    fswin_Select FileString On Context Menu When Right Click On A File
+    fswin_Select String This File
+    fswin_Click Continue Button When PDF Tron Is Down
+    fswin_Click Continue If File Is PPT Or PPTX    ${v_data[0]}
+    fswin_Verify Error Message When String Other File    ${v_data[1]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Close Error Message When String Other File    fswin_Close FileString Folder
+
+fs[1996]_Can Not share file with long name (> 128 characters)
+    #    Generate a recipient
+    fswin_Generate An Email Address
+    #    String a File
+    fswin_Open FileString Folder
+    fswin_Copy File    ${v_pathOfFileTypeUnsupportedFolder}/${v_data[0]}    ${v_fsLocation}
+    fswin_Search A File And Right Click    FileString    ${v_data[0]}    ${v_fsLocation}
+    fswin_Select FileString On Context Menu When Right Click On A File
+    fswin_Select String This File
+    fswin_Click Continue Button When PDF Tron Is Down
+    fswin_Click Continue If File Is PPT Or PPTX    ${v_data[0]}
+    fswin_Verify Error Message When String Other File    ${v_data[1]}    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Close Error Message When String Other File    fswin_Close FileString Folder
+
+fs[1998]_Can not share file un-supported
+    #    Generate a recipient
+    fswin_Generate An Email Address
+    #    String a File
+    fswin_Open FileString Folder
+    fswin_Copy File    ${v_pathOfFileTypeUnsupportedFolder}/${v_data[0]}    ${v_fsLocation}
+    fswin_Search A File And Right Click    FileString    ${v_data[0]}    ${v_fsLocation}
+    fswin_Select FileString On Context Menu When Right Click On A File
+    fswin_Verify Context Menu Contain Un-supported ChildMenu
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Close FileString Folder

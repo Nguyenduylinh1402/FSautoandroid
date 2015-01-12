@@ -1,0 +1,55 @@
+*** Settings ***
+Resource          BusinessKeywordsForWeb.txt
+Resource          ../Windows/BusinessKeywordsInWindows.txt
+
+*** Keywords ***
+fsweb_verifyEmailAddress
+    [Arguments]    ${v_emailAddress}
+    Run Keyword If    '${v_emailDomain}'=='tempinbox.com'    fsweb_tempinboxEmailAddress    ${v_emailAddress}
+    Run Keyword If    '${v_emailDomain}'=='mailinator.com'    fsweb_milinatorEmailAddress    ${v_emailAddress}
+
+fsweb_verifyPageContainText
+    [Arguments]    ${v_text}
+    : FOR    ${v_index}    IN RANGE    1    7
+    \    ${v_isContain}=    Run Keyword And Return Status    Page Should Contain    ${v_text}
+    \    Exit For Loop If    ${v_isContain}==True
+    \    Reload Page
+    \    Sleep    5s
+    Run Keyword If    ${v_isContain}==False    Fail    Could not find ${v_text}
+
+fsweb_milinatorEmailAddress
+    [Arguments]    ${v_emailAddress}
+    comment    Mail mailinator.com
+    ${v_url}=    Replace String    http://www.mailinator.com/inbox.jsp?to=<<yourEmailAddress>>    <<yourEmailAddress>>    ${v_emailAddress}
+    fsweb_Open Optional Browser And Set Selenium Speed    ${v_url}    gc
+    Comment    Click on (div)
+    Sleep    1s
+    Wait Until Keyword Succeeds    70s    30s    fsweb_verifyPageContainText    Please verify your email address
+    ${v_numberOfRows}=    Get Matching Xpath Count    //ul[@id="mailcontainer"]/li
+    : FOR    ${v_index}    IN RANGE    1    ${v_numberOfRows}+1
+    \    ${v_currentText}=    Get Text    //ul[@id="mailcontainer"]/li[${v_index}]/a/div[2]
+    \    ${v_isEquals}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_currentText.strip()}    Please verify your email address
+    \    Run Keyword If    ${v_isEquals}==True    Click Element    //ul[@id="mailcontainer"]/li[${v_index}]/a/div[2]
+    \    Exit For Loop If    ${v_isEquals}==True
+    Sleep    1s
+    Wait Until Keyword Succeeds    70s    30s    fsweb_verifyPageContainText    Verify Your Email Address
+    Select Frame    //iframe
+    ${v_activationLink}=    Get Element Attribute    //a[contains(.,'Verify Your Email Address')]@href
+    Go To    ${v_activationLink}
+    Sleep    1s
+    Wait Until Page Contains    Your email address is verified
+    Close All Browsers
+
+fsweb_tempinboxEmailAddress
+    [Arguments]    ${v_emailAddress}
+    ${v_url}=    Replace String    http://tempinbox.com/cgi-bin/checkmail.pl?username=<<yourEmailAddress>>&button=Check+Mail&terms=on&kw=spam+email+inbox+filter    <<yourEmailAddress>>    ${v_emailAddress}
+    fsweb_Open Optional Browser And Set Selenium Speed    ${v_url}    gc
+    Sleep    1s
+    Wait Until Keyword Succeeds    70s    30s    fsweb_verifyPageContainText    Please verify your email address
+    Click Link    Please verify your email address
+    Sleep    1s
+    Wait Until Keyword Succeeds    70s    30s    fsweb_verifyPageContainText    Verify Your Email Address
+    Click Link    Verify Your Email Address
+    Sleep    1s
+    Wait Until Page Contains    Your email address is verified
+    Close All Browsers

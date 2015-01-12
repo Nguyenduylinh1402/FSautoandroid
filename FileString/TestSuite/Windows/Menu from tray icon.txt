@@ -1,0 +1,190 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../Resources/Windows/Quit_UnlinkApplication.txt
+
+*** Test Cases ***
+fs[2419]_Check UI of Tray icon
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    Comment    Verify FileString icon at system tray
+    fswin_Verify FileString Icon At System Tray
+    Comment    Get image and compare
+    fswin_Verify UI of Tray Icon    fstrayicon.png
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2421]_Check UI of Tray menu from Tray icon
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    Comment    Verify FileString icon at system tray
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu
+    fswin_Verify All Elements Of Tray Menu
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2423]_Left click on Tray icon to show Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Left Click FileString Icon At System Tray
+    fswin_Verify All Elements Of Tray Menu
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2425]_Right click on Tray icon to show Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify All Elements Of Tray Menu
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2427]_Double click on Tray icon to open FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    Comment    Verify FileString icon at system tray
+    fswin_verifyFileStringIconAtSystemTray
+    Comment    Double click on FileString icon at system tray
+    fswin_Double Click FileString Icon At System Tray
+    Comment    Verify FileString folder is opened
+    fswin_Verify FileString Folder Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2429]_Open Folder from menu on tray icon
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Click on Open FileString Folder icon
+    fswin_Click Open FileString Folder icon In Menu From Tray Icon
+    Comment    Verify FileString folder is opened
+    fswin_verifyFileStringFolderIsOpened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2431]_Check version of build released
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fs_loadDataFromFileNewVersion
+    ...    ${v_menuFromTrayIconDataFile}    AND    fswin_Click FileString Icon At System Tray
+    [Template]    fswin_Verify Version Of Build Released
+    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2433]_Launch to website FileString.com from menu on Tray icon
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify tray menu is opened
+    fswin_Verify All Elements Of Tray Menu
+    Comment    Click on open FileString website
+    Comment    Verify Website is opened
+    #    FileString website is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2439]_From Tray icon, right click - click on "Setting" button - Open FS Tour
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify tray menu is opened
+    fswin_Verify All Elements Of Tray Menu
+    Comment    Click on Setting button
+    fswin_Click Setting Button At Menu From Tray Icon
+    Comment    Verify menu setting is opened
+    fswin_Verify All Elements Of Menu Setting
+    Comment    Click on "FileString Tour" item
+    fswin_Click FileString Tour Item In Setting Menu
+    Comment    Verify FS tour is opened
+    fswin_Verify FileString Tour Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Tour    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2441]_From Tray icon, right click - click on "Setting" button - Open Help Center
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify All Elements Of Tray Menu
+    Comment    Click on Setting button
+    fswin_Click Setting Button At Menu From Tray Icon
+    Comment    Verify menu setting is opened
+    fswin_Verify All Elements Of Menu Setting
+    Comment    Click Open Help Center
+    Comment    Rn Click Element    ${gmwin_systemTray_settingMenu[3]}
+    Comment    Verify Help Center is opened
+    Comment    fswin_Verify Help Center Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2443]_From Tray icon, right click - click on "Setting" button - Open "Device Settings" form
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify All Elements Of Tray Menu
+    Comment    Click on Setting button
+    fswin_Click Setting Button At Menu From Tray Icon
+    Comment    Verify menu setting is opened
+    fswin_Verify All Elements Of Menu Setting
+    Comment    Click on Device Settings
+    fswin_Click Device Setting At Context Menu From Setting Button
+    Comment    Verify Device Settings is opened
+    fswin_Verify All Elements In Device Settings
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Device Settings Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2445]_From Tray icon, right click - click on "Setting" button - Open "Your Preferences" form
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify All Elements Of Tray Menu
+    Comment    Click on Setting button
+    fswin_Click Setting Button At Menu From Tray Icon
+    Comment    Verify menu setting is opened
+    fswin_Verify All Elements Of Menu Setting
+    Comment    Click on Your Preferences
+    fswin_Click Your Preferences In Menu Setting
+    Comment    Verify Your Prefereces is opened
+    fswin_Verify All Elements In Your Preferences
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Your Preferences Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2447]_From Tray icon, right click - click on "Setting" button - Quit app
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Log    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify All Elements Of Tray Menu
+    Log    Click on Setting button
+    fswin_Click Setting Button At Menu From Tray Icon
+    Log    Verify menu setting is opened
+    fswin_Verify All Elements Of Menu Setting
+    Log    Click Quit FileString
+    fswin_Click Quit FileString
+    Log    Verify FileString icon is not at system tray
+    fswin_verifyFileStringIconIsNotAtSystemTray
+    [Teardown]    Run Keywords    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    Sleep    5s
+    ...    AND    fswin_Verify FileString Icon At System Tray And Unlink    AND    fswin_Quit Application
+
+fs[2449]_Check status menu ( Display sync status of sent and received files together)
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify Sync Status Of Sent And Received Files
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2451]_Change Status of Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    Comment    Verify all elements in FileString tray menu (make sure that Tray menu is opened)
+    fswin_Verify Sync Status Of Sent And Received Files
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application

@@ -1,0 +1,60 @@
+*** Settings ***
+Library           OperatingSystem
+Library           String
+Resource          ../../Variables/WinVarialbes.txt
+
+*** Keywords ***
+fswin_Install Application
+    Comment    Verify App is installed or not
+    ${v_isAppInstalled}=    fswin_Check Program Is Installed
+    Run Keyword If    ${v_isAppInstalled}==True    fswin_Uninstall Application
+    Comment    Install app
+    ${v_isInstallationFileExist}=    Run Keyword And Return Status    Directory Should Exist    ${v_pathToBuildFolder}
+    Run Keyword If    ${v_isInstallationFileExist}==False    Fail    Path to installation file is not exist
+    Comment    Count number of file in folder
+    ${v_numberOfFiles}=    Count Files In Directory    ${v_pathToBuildFolder}
+    Run Keyword If    ${v_numberOfFiles}==0    Fail    The folder: ${v_pathToBuildFolder} does not contain any file
+    Comment    Get first file and get file's modified time
+    ${v_listFiles}=    OperatingSystem.List Files In Directory    ${v_pathToBuildFolder}
+    Set Global Variable    ${v_nameOfSelectedFile}    ${v_listFiles[0]}
+    ${v_previousModified}=    Get Modified Time    ${v_pathToBuildFolder}/${v_listFiles[0]}
+    Set Global Variable    ${v_previousModified}
+    : FOR    ${v_index}    IN RANGE    0    ${v_numberOfFiles}
+    \    ${v_fullpath}=    Join Path    ${v_pathToBuildFolder}    ${v_listFiles[${v_index}]}
+    \    ${v_extension}=    fswin_Get File Extension    ${v_fullpath}
+    \    Run Keyword If    '${v_extension}'=='exe'    fswin_Compare Time    ${v_pathToBuildFolder}    ${v_listFiles[${v_index}]}
+    Comment    Open Exefile
+    ${v_result}=    Run    "${v_pathToBuildFolder}\\${v_nameOfSelectedFile}" /silent
+
+fswin_Uninstall Application
+    Comment    Verify App is installed
+    ${v_isInstalled}=    fswin_Check Program Is Installed
+    Run Keyword If    ${v_isInstalled}==True    fswin_Uninstall Details
+
+fswin_Uninstall Details
+    ${v_pathToUninstallFile}=    Replace String    ${v_pathToApplicationOnMachine1}    FileString.exe    unins000.exe
+    Run    "${v_pathToUninstallFile}" /silent
+
+fswin_Get File Extension
+    [Arguments]    ${v_fileName}
+    ${v_filenameSplited}=    Split String    ${v_fileName}    .
+    Return From Keyword    ${v_filenameSplited[-1]}
+
+fswin_Compare Time
+    [Arguments]    ${v_pathToBuildFile}    ${v_filename}
+    ${v_currentModified}=    Get Modified Time    ${v_pathToBuildFile}\\${v_filename}
+    ${v_currentModifiedSticks}=    Evaluate    time.mktime(datetime.datetime.strptime("${v_currentModified}","%Y-%m-%d %H:%M:%S").timetuple())    datetime,time
+    ${v_previousModifiedSticks}=    Evaluate    time.mktime(datetime.datetime.strptime("${v_previousModified}","%Y-%m-%d %H:%M:%S").timetuple())    datetime,time
+    Comment    ${v_isBiger}=    Run Keyword And Return Status    ${v_currentModified}>=${v_previousModified}
+    Run Keyword If    ${v_currentModifiedSticks}>=${v_previousModifiedSticks}    Set Global Variable    ${v_nameOfSelectedFile}    ${v_filename}
+    Run Keyword If    ${v_currentModifiedSticks}>=${v_previousModifiedSticks}    Set Global Variable    ${v_previousModified}    ${v_currentModified}
+
+fswin_Check Program Is Installed
+    ${v_isFileExist}=    Run Keyword And Return Status    File Should Exist    ${v_pathToApplicationOnMachine1}
+    [Return]    ${v_isFileExist}
+
+fswin_Verify FileString Is Installed Successful
+    Import Library    Remote    127.0.0.1:8270
+    Comment    Wait 2 minutes for sign in screen appear
+    ${v_isSignInScreenExist}=    Rn Wait For Element Exist    ${gmwin_signInScreen[0]}    120000
+    Run Keyword If    ${v_isSignInScreenExist}==False    Fail    "Sign In" screen did not appear after install FileString Application

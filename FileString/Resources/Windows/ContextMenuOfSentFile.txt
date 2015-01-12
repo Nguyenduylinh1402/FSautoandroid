@@ -1,0 +1,113 @@
+*** Settings ***
+Resource          BusinessKeywordsInWindows.txt
+Resource          ShareNewFile.txt
+
+*** Variables ***
+${v_contextMenuOfSentFileDataFile}    ${CURDIR}/../../DataSet/Windows/ContextMenuOfSentFile.xlsx
+
+*** Keywords ***
+fswin_verifyAllChildMenuItemOfFileIsNotEdit
+    Comment    Verify "Add new recipients"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[11]}    1000    Add new recipients child menu item did not exist
+    Comment    Verify "Change Recipient Rights"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[12]}    1000    Change Recipient Rights menu item did not exist
+    Comment    Verify "View Recipients"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[13]}    1000    View Recipients child menu item did not exist
+    Comment    Verify "Track File Views"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[14]}    1000    Track File Views child menu item did not exist
+    Comment    Verify "Revoke recipient access"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[15]}    1000    Revoke recipient access child menu item did not exist
+    Comment    Verify "File Infomation"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[16]}    1000    File Infomation menu item did not exist
+    Comment    Verify "Show on FileString.com"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[17]}    1000    Show on FileString.com child menu item did not exist
+
+fswin_verifyAllChildMenuItemOfFileIsEdited
+    Comment    Verify "Add new recipients"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[11]}    1000    Add new recipients child menu item did not exist
+    Comment    Verify "Change Recipient Rights"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[12]}    1000    Change Recipient Rights menu item did not exist
+    Comment    Verify "View Recipients"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[13]}    1000    View Recipients child menu item did not exist
+    Comment    Verify "Track File Views"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[14]}    1000    Track File Views child menu item did not exist
+    Comment    Verify "Revoke recipient access"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[15]}    1000    Revoke recipient access child menu item did not exist
+    Comment    Verify "File Infomation"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[16]}    1000    File Infomation menu item did not exist
+    Comment    Verify "Show on FileString.com"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[17]}    1000    Show on FileString.com child menu item did not exist
+    Comment    Verify "Push file update"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[18]}    1000    Push File Update child menu item did not exist
+
+fswin_verifyAllChildMenuItemOfFileHasNoRecipient
+    Comment    Verify "Add new recipients"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[11]}    1000    Add new recipients child menu item did not exist
+    Comment    Verify "File Infomation"
+    fswin_verifyElementExistAndShowMessageLog    ${gmwin_menuStateWhenRightClick[16]}    1000    File Infomation menu item did not exist
+
+fswin_clickOnFileNameInSubmenuRecentSentFile
+    [Arguments]    ${v_data[0]}
+    Comment    Get element locator
+    ${v_elementLocator}=    Replace String    ${gmwin_recentSentFile[0]}    <<filename>>    ${v_data[0]}
+    Comment    Check element exist
+    fswin_verifyElementExistAndShowMessageLog    ${v_elementLocator}    5000    File name ${v_data[0]} did not exist in Recent Sent File sub-menu in system tray
+    Comment    Click element
+    Rn Click Element    ${v_elementLocator}
+
+fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item
+    [Arguments]    ${v_filename}    ${v_libName}=Remote
+    fswin_Open FileString Folder    ${v_libName}
+    fswin_Search A File And Right Click    FileString    ${v_filename}    ${v_fsLocation}    ${v_libName}
+    fswin_Select FileString On Context Menu When Right Click On A File    ${v_libName}
+
+fswin_Open FileString Folder, Copy File, Search, Right Click And Select FileString Menu Item
+    [Arguments]    ${v_pathToFolderContainFile}    ${v_filename}    ${v_libName}=Remote
+    fswin_Open FileString Folder    ${v_libName}
+    fswin_Copy File    ${v_pathToFolderContainFile}/${v_filename}    ${v_fsLocation}
+    fswin_Search A File And Right Click    FileString    ${v_filename}    ${v_fsLocation}    ${v_libName}
+    fswin_Select FileString On Context Menu When Right Click On A File    ${v_libName}
+
+fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon
+    [Arguments]    ${v_elementLocator}    ${v_timeOut}    ${v_errorMessage}    ${v_libName}=Remote
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element    ${v_elementLocator}    ${v_timeOut}
+    Run Keyword If    ${v_isExist}==False    Fail    ${v_errorMessage}
+
+fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name
+    [Arguments]    ${v_filename}    ${v_libName}=Remote
+    fswin_Click FileString Icon At System Tray    ${v_libName}
+    fswin_Click Recent Sent Files On Menu From Tray Icon At System Tray    ${v_libName}
+    fswin_Click FileName Child Menu From Recent Sent Files    ${v_filename}    ${v_libName}
+
+fswin_Click FileName Child Menu From Recent Sent Files
+    [Arguments]    ${v_filename}    ${v_libName}=Remote
+    ${v_elementLocator}=    Replace String    ${gmwin_recentSentFileChildMenu[0]}    <<filename>>    ${v_filename}
+    ${v_isFileExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${v_elementLocator}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileExist}==False    Fail    File ${v_filename} is not exist in Recent Sent Files child menu
+    Run Keyword    ${v_libName}.Rn Click Element    ${v_elementLocator}
+
+fswin_Click File Information From Sub Menu In Menu From Tray Icon
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileInformationExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_recentSentFileSubMenu[6]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileInformationExist}==False    Fail    File Information from sub-menu in menu from tray icon is not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_recentSentFileSubMenu[6]}
+
+fswin_Click Show In Explorer
+    [Arguments]    ${v_libName}=Remote
+    ${v_isShowInExplorerExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_recentSentFileSubMenu[7]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isShowInExplorerExist}==False    Fail    Menu Item Show In Explorer is not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_recentSentFileSubMenu[7]}
+
+fswin_Verify File Is Selected
+    [Arguments]    ${v_filename}    ${v_libName}=Remote
+    Comment    Select detail view
+    fswin_selectDetailView
+    Comment    Get number of files and folders
+    ${v_numberOfItems}=    Evaluate    20+1
+    Comment    Find index of file
+    : FOR    ${v_index}    IN RANGE    1    ${v_numberOfItems}+1
+    \    ${v_result}=    Run Keyword And Return Status    Run Keyword    ${v_libName}.Rn Element Text Should Be    /form[@title='FileString']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]/text    ${v_filename}
+    \    Exit For Loop If    ${v_result}==True
+    #    Verify file is selected
+    ${v_isSelected}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    /form[@title='FileString']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]    Selected
+    Run Keyword If    ${v_isSelected}==False    Fail    File ${v_filename} is not selected

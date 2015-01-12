@@ -1,0 +1,35 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../Resources/Windows/Quit_UnlinkApplication.txt
+
+*** Test Cases ***
+fs[2619]_Check UI
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Click FileString Icon At System Tray
+    fswin_Verify All Elements Of Tray Menu
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2621]_Check version of build released
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Click FileString Icon At System Tray
+    ...    AND    fs_loadDataFromFileNewVersion    ${v_SystemTrayMenuDataFile}
+    [Template]    fswin_Verify Version Of Build Released
+    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2623]_Check status menu ( Display sync status of sent and received files together)
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_SystemTrayMenuDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Click FileString Icon At System Tray
+    fswin_Verify Sync Status Of Sent And Received Files
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2625]_Change Status on Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_SystemTrayMenuDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Click FileString Icon At System Tray
+    fswin_Verify Change Status
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application

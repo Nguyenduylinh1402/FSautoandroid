@@ -1,0 +1,13 @@
+*** Settings ***
+Resource          Quit_UnlinkApplication.txt
+
+*** Variables ***
+${v_pathToContextMenuOfFCSDataFile}    ${EXECDIR}\\DataSet\\Windows\\ContextMenuOfFCSFile.xlsx
+
+*** Keywords ***
+fswin_Verify FSC File Exist
+    [Arguments]    ${v_folderName}    ${v_filename}
+    fswin_Get FileString Location
+    ${v_pathToFolderContainFCSFile}=    Catenate    SEPARATOR=\\    ${v_fsLocation}    FileString Received Files    ${v_folderName}
+    ${v_isFileExist}=    Run Keyword And Return Status    File Should Exist    ${v_pathToFolderContainFCSFile}\\${v_filename}
+    Run Keyword If    ${v_isFileExist}==False    Fail    File "${v_filename}" in folder "${v_folderName}" did not exist

@@ -1,0 +1,13 @@
+*** Settings ***
+Resource          BusinessKeywordsForAndroid.txt
+
+*** Variables ***
+
+*** Keywords ***
+fsand_Sign In Successful
+    [Arguments]    ${v_emailAddress}    ${v_password}
+    Input Text    id=com.filestring.lattedouble:id/edtSignInEmail    ${v_emailAddress}
+    Input Password    id=com.filestring.lattedouble:id/edtSignInPassword    ${v_password}
+    Click Element    id=com.filestring.lattedouble:id/btnSignIn
+
+fsand_Input Email Address

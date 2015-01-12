@@ -1,0 +1,37 @@
+*** Settings ***
+Resource          ../../Resources/Android/SignInKeywords.txt
+
+*** Test Cases ***
+fs[4672]_Sign in with Email has signed up and verified already
+    [Setup]    Open Application    ${v_remoteUrl}    ${v_alias}
+    fsand_Sign In Successful    minh.nguyen@filestring.com    bommeo11
+    Sleep    5s
+    [Teardown]    Close All Applications
+
+fs[4674]_Sign in with Email has "space" in first and end
+
+fs[4678]_Sign in After reset password with new password
+
+Sign in After change password on web with new password
+
+Sign in After change primary email on web with new Email
+
+Sign in with Account sign up on Web
+
+Sign in with Account sign up on Window
+
+Sign in with secondary email
+
+Email has not sign up yet
+
+Invalid email
+
+Wrong password
+
+Empty any value - Email or Password
+
+Email has signed up but un-verify
+
+Email is secondary email already
+
+Without network

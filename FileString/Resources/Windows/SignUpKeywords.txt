@@ -1,0 +1,158 @@
+*** Settings ***
+Resource          CommonKeywordsInWindows.txt
+Library           DatabaseLibrary
+
+*** Variables ***
+${v_signUpDataFile}    ${CURDIR}/../../DataSet/Windows/SignUp.xlsx
+
+*** Keywords ***
+fswin_template_Can Not Sign Up
+    [Arguments]    ${v_firstname}    ${v_lastname}    ${v_emailAddress}    ${v_password}    ${v_isCheck}    ${v_errorMessage}
+    ...    ${v_libName}=Remote
+    fswin_Navigate To Sign Up Screen
+    fswin_Input First Name    ${v_firstname}    ${v_libName}
+    fswin_Verify Frist Name    ${v_firstname}    ${v_libName}
+    fswin_Input Last Name    ${v_lastname}    ${v_libName}
+    fswin_Verify Last Name    ${v_lastname}    ${v_libName}
+    fswin_Input Email Address Sign Up    ${v_emailAddress}    ${v_libName}
+    fswin_Verify Email Address Sign Up    ${v_emailAddress}    ${v_libName}
+    fswin_Input Password Sign Up    ${v_password}    ${v_libName}
+    fswin_Check on Terms Of Services    ${v_isCheck}    ${v_libName}
+    fswin_Verify Terms of Service    ${v_isCheck}    ${v_libName}
+    fswin_Click Sign Up    ${v_libName}
+    fswin_Verify Error Message At Sign Up Screen    ${v_errorMessage}    ${v_libName}
+
+fswin_Input First Name
+    [Arguments]    ${v_firstName}    ${v_libName}=Remote
+    #    Verify element and input first name
+    ${v_isFirstnameTextfieldExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFirstnameTextfieldExist}==False    Fail    First name textfield did not exist in 'Sign Up' screen
+    Run Keyword    ${v_libName}.Rn Input Text    ${gmwin_signUpScreen[2]}    ${v_firstName}
+
+fswin_Verify Frist Name
+    [Arguments]    ${v_firstName}    ${v_libName}=Remote
+    #    Verify first name has been inputed
+    ${v_passOrFail}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be    ${gmwin_signUpScreen[2]}    ${v_firstName}
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL'    Fail    First name has not been inputed or input incorrect value. The error was "${v_passOrFail[1]}"
+
+fswin_Input Last Name
+    [Arguments]    ${v_lastName}    ${v_libName}=Remote
+    #    Verify element and input lastname
+    ${v_isLastnameTextfieldExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isLastnameTextfieldExist}==False    Fail    Last name textfield did not exist in 'Sign Up' screen
+    Run Keyword    ${v_libName}.Rn Input Text    ${gmwin_signUpScreen[3]}    ${v_lastName}
+
+fswin_Verify Last Name
+    [Arguments]    ${v_lastName}    ${v_libName}=Remote
+    #    Verify last name has been inputed
+    ${v_passOrFail}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be    ${gmwin_signUpScreen[3]}    ${v_lastName}
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL'    Fail    Last name has not been inputed or input incorrect value. The error was "${v_passOrFail[1]}"
+
+fswin_Input Email Address Sign Up
+    [Arguments]    ${v_emailAddress}    ${v_libName}=Remote
+    #    Verify element and input email address
+    ${v_isFirstnameTextfieldExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[4]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFirstnameTextfieldExist}==False    Fail    Email address textfield did not exist in 'Sign Up' screen
+    Run Keyword    ${v_libName}.Rn Input Text    ${gmwin_signUpScreen[4]}    ${v_emailAddress}
+
+fswin_Verify Email Address Sign Up
+    [Arguments]    ${v_emailAddress}    ${v_libName}=Remote
+    #    Verify email address has been inputed
+    ${v_passOrFail}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be    ${gmwin_signUpScreen[4]}    ${v_emailAddress}
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL'    Fail    Email address has not been inputed or input incorrect value. The error was "${v_passOrFail[1]}"
+
+fswin_Input Password Sign Up
+    [Arguments]    ${v_password}    ${v_libName}=Remote
+    #    Verify element and input password
+    ${v_isPasswordTextfieldExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isPasswordTextfieldExist}==False    Fail    Password textfield did not exist in 'Sign Up' screen
+    Run Keyword    ${v_libName}.Rn Input Text    ${gmwin_signUpScreen[5]}    ${v_password}
+
+fswin_Check on Terms Of Services
+    [Arguments]    ${v_isCheck}    ${v_libName}=Remote
+    #    Verify element and check on checkbox
+    ${v_isTermsOfServiceCheckboxExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[6]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isTermsOfServiceCheckboxExist}==False    Fail    Terms of Service checkbox did not exist in 'Sign Up' screen
+    Run Keyword If    ${v_isCheck}==True    Run Keyword    ${v_libName}.Rn Check    ${gmwin_signUpScreen[6]}    ELSE    Run Keyword
+    ...    ${v_libName}.Rn Uncheck    ${gmwin_signUpScreen[6]}    ${v_emailAddress}
+
+fswin_Verify Terms of Service
+    [Arguments]    ${v_isCheck}    ${v_libName}=Remote
+    ${v_hasBeenChecked}=    Run Keyword If    ${v_isCheck}==True    Run Keyword    Rn Check    ${gmwin_signUpScreen[6]}    ELSE
+    ...    Run Keyword    Rn Uncheck    ${gmwin_signUpScreen[6]}
+    #    Verify Term of Service checkbox has been checked
+    ${v_result}=    Run Keyword And Return Status    Should Be Equal    ${v_hasBeenChecked}    ${v_isCheck}
+    Run Keyword If    ${v_result}==False and ${v_isCheck}==True    Fail    Terms of Service checkbox expected checked but it is currently un-checked
+    Run Keyword If    ${v_result}==False and ${v_isCheck}==False    Fail    Terms of Service checkbox expected un-checked but it is currently checked
+
+fswin_Click Sign Up
+    [Arguments]    ${v_libName}=Remote
+    #    Verify element and click on Sign Up button
+    ${v_isSignUpButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[10]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isSignUpButtonExist}==False    Fail    Sign Up button did not exist in 'Sign Up' screen
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_signUpScreen[10]}
+
+fswin_Verify Error Message At Sign Up Screen
+    [Arguments]    ${v_errorMessage}    ${v_libName}=Remote
+    #    Verify error message at Sign Up screen
+    ${v_passOrFail}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_signUpScreen[11]}    ${v_errorMessage}    ${v_timeOutInWindows}
+    Run Keyword If    '${v_passOrFail[0]}'=='FAIL'    Fail    Incorrect error message. The error was "${v_passOrFail[1]}"
+
+fswin_Verify Sign Up Is Disabled
+    [Arguments]    ${v_libName}=Remote
+    #    Verify element and click on Sign Up button
+    ${v_isSignUpButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[10]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isSignUpButtonExist}==False    Fail    Sign Up button did not exist in 'Sign Up' screen
+    ${v_isSignUpButtonEnabled}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${gmwin_signUpScreen[10]}    Enabled
+    ${v_result}=    Run Keyword And Return Status    Should Be Equal    ${v_isSignUpButtonEnabled}    ${False}
+    Run Keyword If    ${v_result}==False    Fail    Sign Up button is enabled while being expected disable
+
+fswin_Sign Up Successful
+    [Arguments]    ${v_firstname}    ${v_lastname}    ${v_emailAddress}    ${v_password}    ${v_libName}=Remote
+    fswin_Input First Name    ${v_firstname}    ${v_libName}
+    fswin_Input Last Name    ${v_lastname}    ${v_libName}
+    fswin_Input Email Address Sign Up    ${v_emailAddress}    ${v_libName}
+    fswin_Input Password Sign Up    ${v_password}    ${v_libName}
+    fswin_Check on Terms Of Services    ${True}    ${v_libName}
+    fswin_Click Sign Up    ${v_libName}
+    fswin_Verify "Verify Your Email Address" Screen    ${v_libName}
+
+fswin_Verify "Verify Your Email Address" Screen
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileStringLogoExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_verifyEmailAddressScreen[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileStringLogoExist}==False    Fail    'Verify Your Email Address' did not exist in 'Sign Up' screen
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_verifyEmailAddressScreen[0]}    Verify Your Email Address    ${v_timeOutInWindows}
+    ${v_isFileStringLogoExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_verifyEmailAddressScreen[1]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileStringLogoExist}==False    Fail    'Verify Your Email Address' did not exist in 'Sign Up' screen
+
+fswin_Delete User Information In Database
+    [Arguments]    ${v_emailAddress}
+    #    Connect to database
+    ${v_isConnectedToDatabase}=    Run Keyword And Ignore Error    DatabaseLibrary.Connect To Database Using Custom Params    adodbapi    'Provider=SQLOLEDB.1;Data Source=${v_databaseSource};Initial Catalog=${v_databaseName};User Id=${v_databaseUsername};Password=${v_databaseUserPassword};'
+    Run Keyword If    '${v_isConnectedToDatabase[0]}'=='FAIL'    Fail    Could not connect to database, the error was: "${v_isConnectedToDatabase[1]}"
+    #    Get current account ID based on its email address
+    ${v_queryResult}=    DatabaseLibrary.Query    select * from UserEmailAddress where EmailAddress='${v_emailAddress}'
+    ${v_userID}=    Set Variable    ${v_queryResult[0][1]}
+    #    Delete 1: from RegisteredDevice table
+    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM RegisteredDevice WHERE DeviceOwnerID='${v_userID}' ; DELETE FROM ServicePreference WHERE UserID='${v_userID}' ; DELETE FROM UserEmailAddress WHERE EmailAddress='${v_emailAddress}' ; DELETE FROM [User] WHERE Username='${v_emailAddress}'
+    #    Delete 2: from ServicePreference table
+    Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM ServicePreference WHERE UserID='${v_userID}'
+    Comment    #    Delete 3: from UserEmailAddress table
+    Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM UserEmailAddress WHERE EmailAddress='${v_emailAddress}'
+    Comment    #    Delete 4: from [User] table
+    Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM [User] WHERE Username='${v_emailAddress}'
+    Comment    DatabaseLibrary.Disconnect From Database
+
+fswin_Verify Email When Register An Account
+    [Arguments]    ${v_firstname}    ${v_emailAddress}    ${v_password}
+    robotmail.Open Mailbox    imap.gmail.com    ${v_emailAddress}    ${v_password}    ${True}
+    ${v_emailID}=    robotmail.Wait For Mail
+    #    Email body
+    Comment    ${v_emailBody}=    ImapLibrary.Get Email Body    ${v_emailID}
+    #    Email content
+    Comment    ${v_result}=    ImapLibrary.Get Matches From Email    ${v_emailID}    [\\w\\W]*[\\s\\n]*Hi ${v_firstname},[\\n\\s]*To complete your FileString sign up process, we need you to verify your email address. This ensures that someone else isn't trying to use your address. The address entered to create this account is${v_emailAddress}.[\\s\\n]*Click the button below to verify your email address and create your FileString account:[\\s\\n]*Verify Your Email Address[\\n\\s]*If you did not sign up for this FileString account, ignore this email and the account under this email address will not be created.[\\s\\n]*Thank you.[\\s\\n]*The FileString Team - "String It"[\\w\\W]*
+    ${v_allLinks}=    robotmail.Get All Links From Email    ${v_emailID}
+    robotmail.Close Mailbox
+    Comment    ${v_length}=    Get Length    ${v_result}
+    Comment    Run Keyword If    ${v_length}!=1    Fail    Email content does not match with email's format
+    Set Test Variable    ${v_allLinks}

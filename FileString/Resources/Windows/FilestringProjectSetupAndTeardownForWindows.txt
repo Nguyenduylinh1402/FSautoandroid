@@ -1,0 +1,26 @@
+*** Settings ***
+Resource          BusinessKeywordsInWindows.txt
+Resource          StartAndStopLibrary.txt
+Resource          Install And Uninstall FileString Application.txt
+Resource          ../TestlinkResources.txt
+Resource          Quit_UnlinkApplication.txt
+Resource          ../CommonKeywordsForAllPlatforms.txt
+Resource          ShareNewFile.txt
+
+*** Keywords ***
+fswin_Project Setup
+    #    Install FileString Application
+    fswin_Install Application
+    #    Create new build or Use existing build to submit test case result into testlink
+    Use Existing Build
+    #    Start ranorex remote library
+    Comment    fswin_Start Ranorex Remote Library
+    Comment    Comment    fswin_Click On Continue Evaluation Button
+    Comment    #    Verify FileString is installed successful
+    Comment    fswin_Verify FileString Is Installed Successful
+
+fswin_Project Teardown
+    Comment    #    Stop ranorex remote library
+    Comment    fswin_Stop Ranorex Remote Library
+    Log    Uninstall FileString Application
+    fswin_Uninstall Application

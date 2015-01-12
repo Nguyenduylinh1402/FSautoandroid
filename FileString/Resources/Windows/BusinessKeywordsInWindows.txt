@@ -1,0 +1,137 @@
+*** Settings ***
+Resource          CommonKeywordsInWindows.txt
+
+*** Keywords ***
+fswin_Verify Your Account Text At Device Settings Form Contain Email Address
+    [Arguments]    ${v_emailAddress}    ${v_libName}=Remote
+    ${v_isAccountTextExist}=    Run Keyword    ${v_libName}.Rn Wait For Element    ${gmwin_deviceSettings[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isAccountTextExist}==False    Fail    Your Account Text did not exist
+    ${v_currentText}=    Run Keyword    ${v_libName}.Rn Get Text    ${gmwin_deviceSettings[2]}
+    ${v_isContain}=    Run Keyword And Ignore Error    Should Contain    ${v_currentText}    ${v_emailAddress}
+    Run Keyword If    '${v_isContain[0]}'=='FAIL'    Fail    Your Account Text is not contain your email address. The error was: "${v_isContain[1]}"
+
+fswin_Generate An Email Address
+    ${v_emailAddress}=    Generate Random String    15    [LOWER]
+    ${v_domain}=    Generate Random String    4    [LOWER]
+    ${v_subDomain}=    Generate Random String    4    [LOWER]
+    ${v_emailAddressGenerated}=    Catenate    SEPARATOR=@    ${v_emailAddress}    ${v_domain}.${v_subDomain}
+    Set Test Variable    ${v_emailAddressGenerated}
+    [Return]    ${v_emailAddressGenerated}
+
+fswin_Generate X Email Address
+    [Arguments]    ${v_numberOfEmailAddress}
+    Comment    Create list to store email address
+    ${v_listOfEmailAddress}=    Create List
+    Comment    Convert string to integer
+    ${v_numberOfEmailAddress}=    Evaluate    ${v_numberOfEmailAddress}
+    : FOR    ${v_index}    IN RANGE    0    ${v_numberOfEmailAddress}
+    \    ${v_currentEmailAddress}=    fswin_Generate An Email Address
+    \    Append To List    ${v_listOfEmailAddress}    ${v_currentEmailAddress}
+    [Return]    ${v_listOfEmailAddress}
+
+fswin_Disable Mouse And Keyboard While Running
+    [Arguments]    ${v_isDiable}=${False}    ${v_libName}=Remote
+    Run Keyword    ${v_libName}.Rn Disable Mouse And Keyboard    ${v_isDiable}
+
+fswin_Load Settings From File
+    fs_loadDataFromFileNewVersion    ${v_pathToSettingsFile}
+    Set Global Variable    ${v_isDebug}    ${v_data[0]}
+    Set Global Variable    ${v_pathToApplication}    ${v_data[1]}
+    Set Global Variable    ${v_timeOutInWindows}    ${v_data[2]}
+    Comment    Set Global Variable    ${v_isDiableMouseAndKeyboardWhileRunning}    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+    Comment    Set Global Variable    \    ${v_data[]}
+
+fswin_Delete All Files In FileString Folder
+    [Arguments]    ${v_fsLocation}    ${v_libName}=Remote
+    @{v_listOfDirectories}=    List Directory    ${v_fsLocation}
+    Log Many    @{v_listOfDirectories}
+    : FOR    ${v_item}    IN    @{v_listOfDirectories}
+    \    ${v_isLockedFile}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_item}    lock.dat
+    \    ${v_isFSReceivedFilesFolder}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_item}    FileString Received Files
+    \    ${v_itemIsFile}=    Run Keyword And Return Status    File Should Exist    ${v_fsLocation}/${v_item}
+    \    Run Keyword If    ${v_itemIsFile}==True and ${v_isLockedFile}==False    Remove File    ${v_fsLocation}/${v_item}
+    \    Run Keyword If    ${v_itemIsFile}==False and ${v_isFSReceivedFilesFolder}==False    Empty Directory    ${v_fsLocation}/${v_item}
+    \    Run Keyword If    ${v_itemIsFile}==False and ${v_isFSReceivedFilesFolder}==False    Remove Directory    ${v_fsLocation}/${v_item}
+    Comment    Click ok on all revoke pop-up
+    : FOR    ${v_index}    IN RANGE    100
+    \    ${v_isRevokePopupExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_revokePopup[2]}    2000
+    \    Exit For Loop If    ${v_isRevokePopupExist}==False
+    \    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_revokePopup[2]}
+    \    Sleep    0.3
+    Sleep    1s
+
+fswin_Search A File And Right Click
+    [Arguments]    ${v_folderName}    ${v_fileName}    ${v_folderLocation}=${EMPTY}    ${v_libName}=Remote
+    ${v_numberOfItems}=    Run Keyword If    '${v_folderLocation}'!='${EMPTY}'    Count Items In Directory    ${v_folderLocation}    ELSE    Evaluate
+    ...    30
+    Comment    Find index of file
+    : FOR    ${v_index}    IN RANGE    1    ${v_numberOfItems}
+    \    ${v_isMatch}=    Run Keyword And Return Status    ${v_libName}.Rn Element Text Should Be    /form[@title='${v_folderName}']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]/text    ${v_fileName}
+    \    Exit For Loop If    ${v_isMatch}==True
+    Run Keyword If    ${v_isMatch}==False    Fail    File ${v_fileName} is not exist in ${v_folderName} folder
+    #    Right click element
+    Run Keyword    ${v_libName}.Rn Click Element    /form[@title='${v_folderName}']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]/text
+    Run Keyword    ${v_libName}.Rn Right Click Element    /form[@title='${v_folderName}']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]/text
+
+fswin_Close All FileString Folders
+    : FOR    ${v_index}    IN RANGE    100
+    \    ${v_isFSFolderExist}=    Rn Wait For Element Exist    ${gwin_fileStringFolder[0]}    100
+    \    Exit For Loop If    ${v_isFSFolderExist}==False
+    \    Rn Click Element    ${gwin_fileStringFolder[0]}
+    \    Sleep    0.1
+
+fswin_deleteAllFilesInFSReceivedFilesFolder
+    Comment    Get current user
+    ${v_currentUser}=    Evaluate    getpass.getuser()    getpass
+    Comment    Delete all files in FS received files
+    ${v_isDirectoryExist}=    Run Keyword And Return Status    Directory Should Exist    C:\\Users\\${v_currentUser}\\FileString\\FileString Received Files
+    Run Keyword If    ${v_isDirectoryExist}==True    Empty Directory    C:\\Users\\${v_currentUser}\\FileString\\FileString Received Files
+
+fswin_Is Next
+    [Arguments]    ${v_implemented}=${True}
+    Pass Execution If    ${v_implemented}==True    Pass
+
+fswin_Verify Email Body When Receive A File
+    [Arguments]    ${v_emailAddress}    ${v_password}    ${v_fileName}
+    ImapLibrary.Open Mailbox    imap.gmail.com    ${v_emailAddress}    ${v_password}
+    Log    Wait for new mail in 10 minutes
+    ${v_isReceivedAnyEmailAddress}=    Run Keyword And Ignore Error    ImapLibrary.Wait For Mail    \    \    \    300
+    Run Keyword If    '${v_isReceivedAnyEmailAddress[0]}'=='FAIL'    Fail    Email server did not response any email to client!
+    ${v_lastestMailID}=    Set Variable    ${v_isReceivedAnyEmailAddress[1]}
+    ${v_emailBody}=    Get Email Body    ${v_lastestMailID}
+    ImapLibrary.Close Mailbox
+    ${v_emailBody}=    Replace String    ${v_emailBody}    \n    ${EMPTY}
+    ${v_emailBody}=    Replace String    ${v_emailBody}    \r    ${EMPTY}
+    ${v_length}=    Get Length    ${v_emailBody}
+    :FOR    ${v_index}    IN range    0    2
+    \    ${v_last2Chars}=    Get Substring    ${v_emailBody}    ${v_length - 2}
+    \    ${v_emailBody}=    Run Keyword If    '${v_last2Chars}'=='=='    Set Variable    ${v_emailBody}    ELSE
+    \    ...    Catenate    SEPARATOR=    ${v_emailBody}    =
+    ${v_emailBody}=    Evaluate    base64.decodestring('${v_emailBody}')    base64
+    ${v_result}=    Run Keyword And Ignore Error    Should Match Regexp    ${v_emailBody}    [\\w\\W\\s\\S]*I&nbsp;shared&nbsp;this&nbsp;file&nbsp;with&nbsp;you&nbsp;using&nbsp;FileString.[\\w\\W\\s\\S]*View &quot;${v_fileName}&quot;[\\w\\W\\s\\S]*
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    The email body is different with the format. Erorr was: "${v_result[1]}"
+
+fswin_Mark All Emails As Read After Sign Up
+    [Arguments]    ${v_emailAddress}    ${v_password}
+    robotmail.Open Mailbox    imap.gmail.com    ${v_emailAddress}    ${v_password}    ${True}
+    robotmail.Mark Email As Read
+    robotmail.Close Mailbox
+
+fswin_Close This PC Folder
+    [Arguments]    ${v_libName}=Remote
+    ${v_isThisPCFolderExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_thisPCFolder[0]}    ${v_timeOutInWindows}
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_thisPCFolder[0]}
+    Sleep    0.5

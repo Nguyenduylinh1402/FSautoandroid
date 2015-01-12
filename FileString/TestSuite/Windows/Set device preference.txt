@@ -1,0 +1,15 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../Resources/Windows/ShareNewFile.txt
+Resource          ../../Resources/Windows/ContextMenuOfSentFile.txt
+
+*** Test Cases ***
+fs[2371]_From Tray icon, right click - Click on "Setting" button - Device Settings
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_contextMenuOfSentFileDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND
+    ...    fswin_Click FileString Icon At System Tray    AND    fswin_Click Setting Button At Menu From Tray Icon    AND    fswin_Click Device Setting At Context Menu From Setting Button
+    Comment    Verify Device Settings is opened
+    fswin_Verify All Elements In Device Settings
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Device Settings Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application

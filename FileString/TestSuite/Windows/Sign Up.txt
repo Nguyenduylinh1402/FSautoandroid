@@ -1,0 +1,139 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../Resources/Windows/SignUpKeywords.txt
+Resource          ../../Resources/Web/VerifyEmailAddress.txt
+Resource          ../../Resources/Windows/SignInKeywords.txt
+
+*** Test Cases ***
+fs[75]_Sign up new account with an valid email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}    AND    fswin_Navigate To Sign Up Screen    AND    fswin_Mark All Emails As Read After Sign Up
+    ...    ${v_data[2]}    ${v_data[3]}
+    fswin_Sign Up Successful    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}
+    #    Verify Email format from server, and goto this link to verify email address
+    fswin_Verify Email When Register An Account    ${v_data[0]}    ${v_data[2]}    ${v_data[3]}
+    fsweb_Goto Link On Email To Verify Email Address    ${v_allLinks[1]}
+    #    Click continue to sign in
+    fswin_Click Continue Button At Verify Email Address Screen
+    #    Verify sign in successful
+    fswin_Verify After Sign In Successful
+    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray
+    #    Close congratulation form if exist
+    Run Keyword If    '${v_currentScreen}'=='1'    fswin_Close Congratulation Form
+    #    Verify sign in correct account
+    fswin_Verify Sign In Successful    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    AND    Report Test Status    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Quit Application    AND    fswin_Delete User Information In Database    ${v_data[2]}
+
+fs[83]_Can sign up new account with long First name, last name
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}    AND    fswin_Navigate To Sign Up Screen    AND    fswin_Mark All Emails As Read After Sign Up
+    ...    ${v_data[2]}    ${v_data[3]}
+    fswin_Sign Up Successful    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}
+    #    Verify Email format from server, and goto this link to verify email address
+    fswin_Verify Email When Register An Account    ${v_data[0]}    ${v_data[2]}    ${v_data[3]}
+    fsweb_Goto Link On Email To Verify Email Address    ${v_allLinks[1]}
+    #    Click continue to sign in
+    fswin_Click Continue Button At Verify Email Address Screen
+    #    Verify sign in successful
+    fswin_Verify After Sign In Successful
+    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray
+    #    Close congratulation form if exist
+    Run Keyword If    '${v_currentScreen}'=='1'    fswin_Close Congratulation Form
+    #    Verify sign in correct account
+    fswin_Verify Sign In Successful    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    AND    Report Test Status    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Quit Application    AND    fswin_Delete User Information In Database    ${v_data[2]}
+
+fs[92]_Can NOT sign up new account with specialy first name,last name
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}    AND    fswin_Navigate To Sign Up Screen
+    fswin_Input First Name    ${v_data[0]}
+    fswin_Verify Frist Name    ${EMPTY}
+    fswin_Input Last Name    ${v_data[1]}
+    fswin_Verify Last Name    ${EMPTY}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[105]_Can not sign up with no value
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${EMPTY}    ${True}    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[109]_Can Not Sign up with an in-valid email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}    ${True}    ${v_data[4]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[116]_Can Not Sign up with password too long
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}    ${True}    ${v_data[4]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[123]_Can Not Sign up with password too short
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}    ${True}    ${v_data[4]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[132]_Can Not Sign up exist account as primary email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}    ${True}    ${v_data[4]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[140]_Can Not Sign up existed account as secondary email has been verified
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${v_data[3]}    ${True}    ${v_data[4]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[8556]_Can not Sign up with empty First Name
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${EMPTY}    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${True}    ${v_data[3]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[8558]_Can not Sign up with empty Last Name
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${EMPTY}    ${v_data[1]}    ${v_data[2]}    ${True}    ${v_data[3]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[148]_Can not Sign up with empty email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${EMPTY}    ${v_data[2]}    ${True}    ${v_data[3]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[155]_Can not Sign up with empty password
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}
+    [Template]    fswin_template_Can Not Sign Up
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}    ${EMPTY}    ${True}    ${v_data[3]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[162]_Can not Sign up without select checkbox "Term of Service"
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signUpDataFile}    AND    fswin_Navigate To Sign Up Screen
+    fswin_Input First Name    ${v_data[0]}
+    fswin_Verify Frist Name    ${v_data[0]}
+    fswin_Input Last Name    ${v_data[1]}
+    fswin_Verify Last Name    ${v_data[1]}
+    fswin_Input Email Address Sign Up    ${v_data[2]}
+    fswin_Verify Email Address Sign Up    ${v_data[2]}
+    fswin_Input Password Sign Up    ${v_data[3]}
+    fswin_Verify Sign Up Is Disabled
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application

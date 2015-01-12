@@ -1,0 +1,151 @@
+*** Settings ***
+Suite Setup       Run Keywords    Import Library    Remote    127.0.0.1:8270    AND    Import Library    Remote
+...               ${v_ipPortMachine2}    WITH NAME    ${v_libNameMachine2}    AND    fs_loadDataInFirstSheet    ${v_shareNewFileDataFile}    AND
+...               fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}    AND
+...               fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Wait For FileString Is Synced    AND    fswin_Start Application
+...               ${v_pathToApplicationOnMachine2}    ${v_libNameMachine2}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_libNameMachine2}
+...               AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    ${v_libNameMachine2}    AND    fswin_Close Congratulation Form If Exist    ${v_libNameMachine2}    AND
+...               fswin_Wait For FileString Is Synced    ${v_libNameMachine2}
+Suite Teardown    Run Keywords    fswin_Capture Screen Shoot If Fail    AND    fswin_Verify FileString Icon At System Tray And Unlink    ${v_libNameMachine2}    AND    fswin_Quit Application
+...               ${v_libNameMachine2}    AND    fswin_Get FileString Location    AND    fswin_Delete All Files In FileString Folder    ${v_fsLocation}    AND
+...               fswin_Verify FileString Icon At System Tray And Unlink    AND    fswin_Quit Application
+Test Setup        Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_shareNewFileDataFile}    AND    fs_loadDataInFirstSheet
+...               ${v_shareNewFileDataFile}
+Test Teardown     Run Keywords    Report Test Status    AND    fswin_Capture Screen Shoot If Fail    AND    fswin_Close FileString Viewer    ${v_libNameMachine2}
+...               AND    fswin_Close FileString Tour    ${v_libNameMachine2}    AND    fswin_Close This PC Folder    ${v_libNameMachine2}    AND
+...               fswin_Close FileString Folder
+Resource          ../../Resources/Windows/ShareNewFile.txt
+Resource          ../../Resources/Windows/OpenAndViewFileFcs.txt
+
+*** Test Cases ***
+fs[1923]_Share new file and check overlay icon after sharing with Word_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1927]_Share new file and check overlay icon after sharing with Excel_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1931]_Share new file and check overlay icon after sharing with PPT_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1933]_Share new file and check overlay icon after sharing with PDF_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1935]_Share new file and check overlay icon after sharing with PNG_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1937]_Share new file and check overlay icon after sharing with JPG_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1939]_Share new file and check overlay icon after sharing with JPEG_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1941]_Share new file and check overlay icon after sharing with BMP_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1943]_Share new file and check overlay icon after sharing with MP3_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    3000000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    3000000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS Title    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1945]_Share new file and check overlay icon after sharing with MP4_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    3000000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    3000000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS Title    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}
+
+fs[1947]_Share new file and check overlay icon after sharing with txt_Open and view fcs file on machine 2
+    Log    Mark all email as read before string
+    fswin_Mark All Emails As Read After Sign Up    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}
+    Log    Share file and verify in machine A
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    600000    ${v_dataInFirstSheet[4]}
+    Log    Share file and verify message in machine B
+    fswin_Verify Message After Received A File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    600000    ${v_libNameMachine2}
+    Log    Verify view fcs file
+    fswin_Verify Open And View FCS File    ${v_data[0]}    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}    ${v_data[2]}    ${v_libNameMachine2}
+    Log    Verify Email Address
+    fswin_Verify Email Body When Receive A File    ${v_dataInFirstSheet[4]}    ${v_dataInFirstSheet[5]}    ${v_data[0]}

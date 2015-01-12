@@ -1,0 +1,25 @@
+*** Settings ***
+Resource          CommonKeywordsForAndroid.txt
+
+*** Keywords ***
+fswin_Generate An Email Address
+    ${v_emailAddress}=    Generate Random String    15    [LOWER]
+    ${v_domain}=    Generate Random String    4    [LOWER]
+    ${v_subDomain}=    Generate Random String    4    [LOWER]
+    ${v_emailAddressGenerated}=    Catenate    SEPARATOR=@    ${v_emailAddress}    ${v_domain}.${v_subDomain}
+    Set Test Variable    ${v_emailAddressGenerated}
+    [Return]    ${v_emailAddressGenerated}
+
+fswin_Generate X Email Address
+    [Arguments]    ${v_numberOfEmailAddress}
+    Comment    Create list to store email address
+    ${v_listOfEmailAddress}=    Create List
+    Comment    Convert string to integer
+    ${v_numberOfEmailAddress}=    Evaluate    ${v_numberOfEmailAddress}
+    : FOR    ${v_index}    IN RANGE    0    ${v_numberOfEmailAddress}
+    \    ${v_currentEmailAddress}=    fswin_Generate An Email Address
+    \    Append To List    ${v_listOfEmailAddress}    ${v_currentEmailAddress}
+    [Return]    ${v_listOfEmailAddress}
+
+fsand_Navigate To Sign Up Screen
+    Click Element    ${SignIn_SignUp}

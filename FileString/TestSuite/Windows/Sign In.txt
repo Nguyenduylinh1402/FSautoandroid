@@ -1,0 +1,114 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../Resources/Windows/SignInKeywords.txt
+Resource          ../../Resources/Windows/Quit_UnlinkApplication.txt
+Resource          ../../Resources/Windows/SignUpKeywords.txt
+
+*** Test Cases ***
+fs[169]_Sign in as verified Primary email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    fswin_Sign In Successful    ${v_data[0]}    ${v_data[1]}
+    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray
+    #    Verify if Congratulation form existed, close it
+    Run Keyword If    '${v_currentScreen}'=='1'    fswin_Close Congratulation Form
+    fswin_Verify Sign In Successful    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[174]_Unlink computer then login same account
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}    AND    fswin_Sign In Successful    ${v_data[0]}    ${v_data[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    Run Keyword If    '${v_currentScreen}'=='1'    fswin_Close Congratulation Form
+    ...    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    fswin_Sign In Successful    ${v_data[0]}    ${v_data[1]}
+    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray
+    #    Verify if Congratulation form existed, fail (second time log in)
+    Run Keyword If    '${v_currentScreen}'=='1'    Fail    Congratulation Form still opened when user sign in at the second time
+    fswin_Verify Sign In Successful    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[189]_Unlink computer then login with new account
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}    AND    fswin_Sign In Successful    ${v_data[0]}    ${v_data[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    Run Keyword If    '${v_currentScreen}'=='1'    fswin_Close Congratulation Form
+    ...    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    fswin_Sign In Successful    ${v_data[2]}    ${v_data[3]}
+    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray
+    #    Verify if Congratulation form is not existed, fail (first time log in)
+    Run Keyword If    '${v_currentScreen}'=='2'    Fail    Congratulation Form is not opened when user sign in as another account
+    fswin_Close Congratulation Form
+    fswin_Verify Sign In Successful    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[199]_Can not sign in with invalid email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[204]_Can Not Sign in new account without verifying - open "Please verify your email address" form
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fswin_Navigate To Sign Up Screen
+    fswin_Generate An Email Address
+    fswin_Sign Up Successful    Test    Test    ${v_emailAddressGenerated}    1234
+    #    Click back button at Verify Your Email Address screen
+    fswin_Click Back Button
+    #    Click Back button at Sign Up Screen
+    Sleep    1s
+    #    Sign in as generated email address
+    fswin_Click Back Button
+    fswin_Sign In    ${v_emailAddressGenerated}    1234
+    #    Verify Sign In is not successfully
+    fswin_Verify "Verify Your Email Address" Screen
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[218]_Can not sign in with empty email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${EMPTY}    ${v_data[0]}    ${v_data[1]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[222]_Can not sign in with empty password
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${EMPTY}    ${v_data[1]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[226]_Can not sign in with un-registered email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[231]_Can not sign in with wrong email address
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[235]_Can not sign in with wrong password
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[241]_Can not sign in as un-verify secondary email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application
+
+fs[246]_Can not sign in as verified secondary email
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataFromFileNewVersion    ${v_signInDataFile}
+    [Template]    fswin_template_Can Not Sign In
+    ${v_data[0]}    ${v_data[1]}    ${v_data[2]}
+    [Teardown]    Run Keywords    fswin_captureScreenShootIfFail    Report Test Status    fswin_Quit Application

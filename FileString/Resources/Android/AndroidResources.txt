@@ -1,0 +1,13 @@
+*** Settings ***
+Library           AppiumLibrary
+
+*** Variables ***
+${v_remoteUrl}    http://localhost:4723/wd/hub
+${v_platformName}    Android    # It can be "Android" or "IOS"
+${v_platformVersion}    4.4.2    # 4.4.2 / 7.1
+${v_deviceName}    real-device
+${v_pathToAndroidApplication}    ${CURDIR}/ApplicationFolder/FileString_1.3.21.apk
+
+*** Keywords ***
+udk_openApplication
+    Open Application    ${v_remoteUrl}    ${v_platformName}    ${v_platformVersion}    ${v_deviceName}    ${v_pathToAndroidApplication}

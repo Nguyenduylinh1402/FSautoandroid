@@ -1,0 +1,333 @@
+*** Settings ***
+Suite Setup       Run Keywords    Import Library    Remote    127.0.0.1:8270    AND    fs_loadDataInFirstSheet    ${v_ContextMenuOfSentFileDataFile}
+...               AND    fswin_startApplication    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+...               AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Wait For FileString Is Synced
+Suite Teardown    Run Keywords    fswin_Capture Screen Shoot If Fail    AND    fswin_Verify FileString Icon At System Tray And Unlink    AND    fswin_Quit Application    AND
+...               fswin_Delete All Files In FileString Folder    ${v_fsLocation}
+Resource          ../../Resources/Windows/ContextMenuOfSentFile.txt
+
+*** Test Cases ***
+fs[2008]_Context menu of Sent file_Click "Add New Recipient"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Add New Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[11]}    ${v_timeOutInWindows}    Child-menu "Add New Recipient" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2010]_Context menu of Sent file_Click "Change Recipient Rights"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Change Recipient Rights"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[12]}    ${v_timeOutInWindows}    Child-menu "Change Recipient Rights" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2012]_Context menu of Sent file_Click "View Recipients"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "View Recipients"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[13]}    ${v_timeOutInWindows}    Child-menu "View Recipients" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2014]_Context menu of Sent file_Click "Track file Views"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Track file Views"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[14]}    ${v_timeOutInWindows}    Child-menu "Track file Views" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2016]_Context menu of Sent file_Click "Revoke Recipient Access"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Revoke Recipient Access"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[15]}    ${v_timeOutInWindows}    Child-menu "Revoke Recipient Access" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2018]_Context menu of Sent file_Click "File Information"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "File Information"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[16]}    ${v_timeOutInWindows}    Child-menu "File Information" did not exist in FileString context menu
+    fswin_Click File Information In Context Menu Of File Owner
+    fswin_Verify File Information Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2020]_Context menu of Sent file_Show on FileString.com_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Show on FileString.com"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[17]}    ${v_timeOutInWindows}    Child-menu "Show on FileString.com" did not exist in FileString context menu
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[10178]_Context menu of Sent file_Click "Add New Recipient"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Add New Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[0]}    ${v_timeOutInWindows}    Child-menu "Add New Recipient" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10180]_Context menu of Sent file_Click "Change Recipient Rights"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Change Recipient Rights"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[1]}    ${v_timeOutInWindows}    Child-menu "Change Recipient Rights" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10182]_Context menu of Sent file_Click "View Recipients"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "View Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[2]}    ${v_timeOutInWindows}    Child-menu "View Recipient" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10184]_Context menu of Sent file_Click "Track file Views"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Track file Views"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[3]}    ${v_timeOutInWindows}    Child-menu "Track file Views" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10186]_Context menu of Sent file_Click "Revoke Recipient Access"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Revoke Recipient Access"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[5]}    ${v_timeOutInWindows}    Child-menu "Revoke Recipient Access" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10188]_Context menu of Sent file_Click "File Information"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "File Information"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[6]}    ${v_timeOutInWindows}    Child-menu "File Information" did not exist
+    fswin_Click File Information From Sub Menu In Menu From Tray Icon
+    fswin_Verify File Information Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup
+
+fs[10190]_Context menu of Sent file_Show on FileString.com_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Show on FileString.com"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[8]}    ${v_timeOutInWindows}    Child-menu "Show on FileString.com" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10210]_Context menu of Sent file_Click "Show In Explorer"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Show In Explorer"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[7]}    ${v_timeOutInWindows}    Child-menu "Show In Explorer" did not exist
+    fswin_Click Show In Explorer
+    Log    Verify FileString folder is opened and current file is selected
+    fswin_Verify FileString Folder Is Opened
+    fswin_Verify File Is Selected    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2023]_Context menu of Sent files has been edited_Click "Add New Recipient"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Add New Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[11]}    ${v_timeOutInWindows}    Child-menu "Add New Recipient" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2025]_Context menu of Sent files has been edited_Click "Change Recipient Rights"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Change Recipient Rights"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[12]}    ${v_timeOutInWindows}    Child-menu "Change Recipient Rights" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2027]_Context menu of Sent files has been edited_Click "View Recipients"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "View Recipients"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[13]}    ${v_timeOutInWindows}    Child-menu "View Recipients" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2029]_Context menu of Sent files has been edited_Click "Track File View"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Track file Views"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[14]}    ${v_timeOutInWindows}    Child-menu "Track file Views" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2031]_Context menu of Sent files has been edited_Click "Push Update"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Push Update"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[18]}    ${v_timeOutInWindows}    Child-menu "Push Update" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2033]_Context menu of Sent files has been edited_Click "Revoke Recipient Access"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Revoke Recipient Access"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[15]}    ${v_timeOutInWindows}    Child-menu "Revoke Recipient Access" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2035]_Context menu of Sent files has been edited_Click "File Information"_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "File Information"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[16]}    ${v_timeOutInWindows}    Child-menu "File Information" did not exist in FileString context menu
+    fswin_Click File Information In Context Menu Of File Owner
+    fswin_Verify File Information Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2037]_Context menu of Sent files has been edited_Show on FileString.com_From FS folder
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Show on FileString.com"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[17]}    ${v_timeOutInWindows}    Child-menu "Show on FileString.com" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[10192]_Context menu of Sent files has been edited_Click "Add New Recipient"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Add New Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[0]}    ${v_timeOutInWindows}    Child-menu "Add New Recipient" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10194]_Context menu of Sent files has been edited_Click "Change Recipient Rights"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Change Recipient Rights"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[1]}    ${v_timeOutInWindows}    Child-menu "Change Recipient Rights" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10196]_Context menu of Sent files has been edited_Click "View Recipients"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "View Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[2]}    ${v_timeOutInWindows}    Child-menu "View Recipient" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10198]_Context menu of Sent files has been edited_Click "Track File View"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Track file Views"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[3]}    ${v_timeOutInWindows}    Child-menu "Track file Views" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10200]_Context menu of Sent files has been edited_Click "Push Update"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Push Update"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[4]}    ${v_timeOutInWindows}    Child-menu "Push Update" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10202]_Context menu of Sent files has been edited_Click "Revoke Recipient Access"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Revoke Recipient Access"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[5]}    ${v_timeOutInWindows}    Child-menu "Revoke Recipient Access" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10204]_Context menu of Sent files has been edited_Click "File Information"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "File Information"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[6]}    ${v_timeOutInWindows}    Child-menu "File Information" did not exist
+    fswin_Click File Information From Sub Menu In Menu From Tray Icon
+    fswin_Verify File Information Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup
+
+fs[10206]_Context menu of Sent files has been edited_Show on FileString.com_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Show on FileString.com"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[8]}    ${v_timeOutInWindows}    Child-menu "Show on FileString.com" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10212]_Context menu of Sent files has been edited_Click "Show In Explorer"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Show In Explorer"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[7]}    ${v_timeOutInWindows}    Child-menu "Show In Explorer" did not exist
+    Log    Click on child-menu "Show In Explorer"
+    fswin_Click Show In Explorer
+    Log    Verify FileString folder is opened and current file is selected
+    fswin_Verify FileString Folder Is Opened
+    fswin_Verify File Is Selected    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2040]_Context menu of Sent file has no recipient_click "Add New Recipient"
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "Add New Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[11]}    ${v_timeOutInWindows}    Child-menu "Add New Recipient" did not exist in FileString context menu
+    # Web app is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2042]_Context menu of Sent file has no recipient_click "File Information"
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}
+    Log    Verify contain child-menu "File Information"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[16]}    ${v_timeOutInWindows}    Child-menu "File Information" did not exist in FileString context menu
+    fswin_Click File Information In Context Menu Of File Owner
+    fswin_Verify File Information Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[10208]_Context menu of Sent files has no recipient_Click "Add New Recipient"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Add New Recipient"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[0]}    ${v_timeOutInWindows}    Child-menu "Add New Recipient" did not exist
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status
+
+fs[10214]_Context menu of Sent files has no recipient_Click "File Information"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "File Information"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[6]}    ${v_timeOutInWindows}    Child-menu "File Information" did not exist
+    fswin_Click File Information From Sub Menu In Menu From Tray Icon
+    fswin_Verify File Information Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup
+
+fs[10216]_Context menu of Sent files has no recipient_Click "Show In Explorer"_From Tray menu
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Click FileString At System Tray, Search A File, Click Recent Sent Files And Click On File Name    ${v_data[0]}
+    Log    Verify contain child-menu "Show In Explorer"
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_recentSentFileSubMenu[7]}    ${v_timeOutInWindows}    Child-menu "Show In Explorer" did not exist
+    Log    Click on child-menu "Show In Explorer"
+    fswin_Click Show In Explorer
+    Log    Verify FileString folder is opened and current file is selected
+    fswin_Verify FileString Folder Is Opened
+    fswin_Verify File Is Selected    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2060]_Context menu of Un-supported file_File Type Not Supported
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Copy File, Search, Right Click And Select FileString Menu Item    ${v_pathOfFileTypeUnsupportedFolder}    ${v_data[0]}
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[7]}    ${v_timeOutInWindows}    "View Supported File Format" menu item is not exist when right click on an unsupported file
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder
+
+fs[2062]_Context menu of Un-supported file_Click "View Supported File Formats"
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_contextMenuOfSentFileDataFile}    AND
+    ...    fswin_Open FileString Folder, Copy File, Search, Right Click And Select FileString Menu Item    ${v_pathOfFileTypeUnsupportedFolder}    ${v_data[0]}
+    fswin_Verify Context Menu Or Child Menu In Menu From Tray Icon    ${gmwin_contextMenuWhenRightClick[8]}    ${v_timeOutInWindows}    "(File Type Not Supported)" menu item is not exist when right click on an unsupported file
+    # web is not implemented yet
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder

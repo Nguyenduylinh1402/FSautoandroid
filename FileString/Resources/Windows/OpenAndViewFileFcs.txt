@@ -1,0 +1,151 @@
+*** Settings ***
+Resource          ContextMenuOfFCSFile.txt
+Resource          Quit_UnlinkApplication.txt
+
+*** Variables ***
+${v_openAndViewFCSDataFile}    ${CURDIR}/../../DataSet/Windows/OpenAndViewFCSFile.xlsx
+${v_pathToImagesBasedFolder}    ${CURDIR}/../../DataSet/Windows/Images
+${v_pathToImagesBasedFolderOnMachine2}    D:/Images
+
+*** Keywords ***
+fswin_Verify FCS File Is Opened
+    [Arguments]    ${v_libName}=Remote
+    Comment    Wait until file is opened in 1 minutes
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileStringViewer[0]}    60000
+    Run Keyword If    ${v_isExist}==False    Fail    FileString viewer did not open after 1 minute
+
+fswin_Verify FileString Viewer Is Opened Correctly
+    [Arguments]    ${v_imageFilename}    ${v_libName}=Remote
+    fswin_Maximize FileString Viewer    ${v_libName}
+    fswin_Set Zoom Ratio For FileString Viewer    100%    ${v_libName}
+    Comment    get path of image file
+    ${v_pathToImage}=    Join Path    ${v_pathToImagesBasedFolderOnMachine2}    ${v_imageFilename}
+    ${v_isContainImage}=    Run Keyword    ${v_libName}.Rn Find Element Based On Image    ${gmwin_fileStringViewer[0]}    ${v_pathToImage}
+    Run Keyword If    ${v_isContainImage}==False    Fail    The file is opened by FileString Viewer is not same with source
+
+fswin_Verify FileString Viewer Title
+    [Arguments]    ${v_fileName}    ${v_libName}=Remote
+    ${v_currentTitle}=    Catenate    /form[@name='FileString -    ${v_fileName}']
+    ${v_isTitleExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${v_currentTitle}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isTitleExist}==False    Fail    FileString viewer is opening incorrect file
+
+fswin_Change FCS FileName
+    [Arguments]    ${v_foldername}    ${v_filename}
+    fswin_Get FileString Location
+    ${v_pathToFolderContainFCSFile}=    Join Path    ${v_fsLocation}    FileString Received Files    ${v_foldername}
+    Comment    Rename
+    Evaluate    os.rename("${v_pathToFolderContainFCSFile}/${v_filename}","${v_pathToFolderContainFCSFile}/fswinAutomation.fcs")    os
+
+fswin_Verify Popup Message After Rename FCS File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_warningMessageWhenRenameAFile[0]}
+    Run Keyword If    ${v_isExist}==False    Fail    Error message did not appear when rename a fcs file
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_warningMessageWhenRenameAFile[1]}    This file can not be renamed because the name is controlled by the file owner.    ${v_timeOutInWindows}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Incorrect error message after rename fcs file, the error was: "${v_result[1]}"
+
+fswin_Close Popup Message When Rename FCS File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_warningMessageWhenRenameAFile[3]}
+    Run Keyword If    ${v_isExist}==False    Fail    Button OK did not exist in error message
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_warningMessageWhenRenameAFile[3]}
+
+fswin_Verify FSC File Should Not Exist
+    [Arguments]    ${v_folderName}    ${v_filename}
+    fswin_Get FileString Location
+    ${v_pathToFolderContainFCSFile}=    Join Path    ${v_fsLocation}    FileString Received Files    ${v_folderName}
+    ${v_isFileExist}=    Run Keyword And Return Status    File Should Exist    ${v_pathToFolderContainFCSFile}\\${v_filename}
+    Run Keyword If    ${v_isFileExist}==True    Fail    File "${v_filename}" is exist in folder "${v_folderName}" while expecting doesnot exist
+
+fswin_Change FCS File Extension
+    [Arguments]    ${v_foldername}    ${v_filename}
+    Comment    Split filename and extension
+    ${v_name}    ${v_extension}    Split Extension    ${v_filename}
+    Set Test Variable    ${v_name}
+    Comment    Get current user
+    fswin_Get FileString Location
+    ${v_pathToFolderContainFCSFile}=    Join Path    ${v_fsLocation}    FileString Received Files    ${v_foldername}
+    Comment    Rename
+    Evaluate    os.rename("${v_pathToFolderContainFCSFile}/${v_filename}","${v_pathToFolderContainFCSFile}/${v_name}.doc")    os
+
+fswin_Verify Error Message When Open Expired File
+    [Arguments]    ${v_filename}    ${v_firstname}    ${v_lastname}    ${v_libName}=remote
+    ${v_isErrorMessageExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_errorMessageWhenOpenExpiredFile[1]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isErrorMessageExist}==False    Fail    FileString error message is not opened
+    fswin_Get FileString Location    ${v_libName}
+    Comment    get message
+    ${v_errorMessage}=    Replace String    Your access to the file ${v_fsLocation}\\FileString Received Files\\<<FristName>> <<LastName>>\\<<FileName>> has expired    <<FristName>> <<LastName>>\\<<FileName>>    ${v_firstname}${SPACE}${v_lastname}\\${v_filename}
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_errorMessageWhenOpenExpiredFile[1]}    ${v_errorMessage}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Error message when open open expired file is incorrect. The error was: "${v_result[1]}"
+
+fswin_closeErrorMessageWhenOpeningExpiredFile
+    ${v_isPopupExist}=    Rn Wait For Element Exist    ${gmwin_errorMessageWhenOpenExpiredFile[2]}
+    Run Keyword If    ${v_isPopupExist}==True    Rn Click Element    ${gmwin_errorMessageWhenOpenExpiredFile[2]}
+
+fswin_Close Warning Message When Rename FCS File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isWarningMessageExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_warningMessageWhenRenameAFile[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isWarningMessageExist}==False    Fail    Warning message when rename fsc file is not exist
+    Sleep    0.5
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_warningMessageWhenRenameAFile[3]}
+
+fswin_Open FCS File
+    [Arguments]    ${v_filename}    ${v_firstname}    ${v_lastname}    ${v_libName}=Remote
+    Log    Get FileString Location
+    fswin_Get FileString Location    ${v_libName}
+    ${v_pathToFCSFile}=    Join Path    ${v_fsLocation}    FileString Received Files    ${v_firstname}${SPACE}${v_lastname}    ${v_filename}
+    Log    Verify file is exist
+    Comment    fswin_Verify FCS File Is Exist    ${v_libName}
+    #    Run Keyword And Return Status    File Should Exist    ${v_pathToFCSFile}
+    #    ${v_isExist}==False    Fail    File "${v_filename}" is not exist in Folder contain FCS File
+    Log    Open explorer
+    fswin_Open Windows Explorer    ${v_libName}
+    Log    Open FCS file
+    ${v_isExplorerOpened}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    /form[@title='This PC']/element[@class='WorkerW']/?/?/element[@controlid='41477']//toolbar[@controlid='1001']    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExplorerOpened}==False    Fail    Explorer folder is not opened
+    Run Keyword    ${v_libName}.Rn Click Element    /form[@title='This PC']/element[@class='WorkerW']/?/?/element[@controlid='41477']//toolbar[@controlid='1001']
+    Run Keyword    ${v_libName}.Rn Send Keys    \    ${v_pathToFCSFile}{return}
+
+fswin_Close Warning message When Open Expired FCS File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isWarningMessageExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_warningMessageWhenRenameAFile[4]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isWarningMessageExist}==False    Fail    Warning message when open expired fsc file is not exist
+    Sleep    0.5
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_warningMessageWhenRenameAFile[4]}
+
+fswin_Verify Open And View FCS File
+    [Arguments]    ${v_sentFileName}    ${v_firstname}    ${v_lastname}    ${v_imageFilename}    ${v_libName}=Remote
+    Comment    sleep    60s
+    Log    Get FCS file name based on sent file name
+    fswin_Get FCS File Name Based On Sent File Name    ${v_sentFileName}
+    Log    Verify file is exist and open file
+    fswin_Open FCS File    ${v_fscFileName}    ${v_firstname}    ${v_lastname}    ${v_libName}
+    Log    Verify FCS file is opened
+    fswin_Verify FCS File Is Opened    ${v_libName}
+    Log    Verify FS is opened correctly
+    fswin_Verify FileString Viewer Is Opened Correctly    ${v_imageFilename}    ${v_libName}
+
+fswin_Verify Open And View FCS Title
+    [Arguments]    ${v_sentFileName}    ${v_firstname}    ${v_lastname}    ${v_libName}=Remote
+    Comment    sleep    60s
+    Log    Get FCS file name based on sent file name
+    fswin_Get FCS File Name Based On Sent File Name    ${v_sentFileName}
+    Log    Verify file is exist and open file
+    fswin_Open FCS File    ${v_fscFileName}    ${v_firstname}    ${v_lastname}    ${v_libName}
+    Log    Verify FCS file is opened
+    fswin_Verify FCS File Is Opened    ${v_libName}
+    Log    Verify FS is opened correctly
+    fswin_Verify FileString Viewer Title    ${v_fscFileName}    ${v_libName}
+
+fswin_Get FCS File Name Based On Sent File Name
+    [Arguments]    ${v_filename}
+    ${v_name}    ${v_extension}    Split Extension    ${v_filename}
+    Set Test Variable    ${v_fscFileName}    ${v_name}.fcs
+
+fswin_Maximize FileString Viewer
+    [Arguments]    ${v_libName}=Remote
+    ${v_isMaximizeButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileStringViewer[2]}
+    Run Keyword If    ${v_isMaximizeButtonExist}==False    Fail    Maximize button in FileString viewer is not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_fileStringViewer[2]}
+    Sleep    1s
+
+fswin_Verify FCS File Is Exist

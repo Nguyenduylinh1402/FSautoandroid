@@ -1,0 +1,11 @@
+*** Settings ***
+Resource          BusinessKeywordsForWeb.txt
+
+*** Keywords ***
+fsweb_Goto Link On Email To Verify Email Address
+    [Arguments]    ${v_verifyLink}
+    fsweb_Open Optional Browser And Set Selenium Speed    ${v_verifyLink}    gc    30s
+    #    Verify page contain "Email Address is verified"
+    ${v_result}=    Run Keyword And Ignore Error    Wait Until Page Contains    Your email address is verified
+    Close All Browsers
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    The link to verify email address is incorrect! Or Email address is not verified. Error message was: "${v_result[1]}"

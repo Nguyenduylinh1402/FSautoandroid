@@ -1,0 +1,105 @@
+*** Settings ***
+Resource          MenuFromTrayIcon.txt
+Resource          SignInKeywords.txt
+Resource          ShareNewFile.txt
+
+*** Variables ***
+${v_QuitUnlinkDataFile}    ${CURDIR}/../../DataSet/Windows/Quit Unlink Application.xlsx
+${v_SystemTrayMenuDataFile}    ${CURDIR}/../../DataSet/Windows/SystemTrayMenu.xlsx
+
+*** Keywords ***
+fswin_Verify FileString Icon At System Tray
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==False    Fail    Could not find FileString icon at system tray
+
+fswin_Verify FileString Icon At System Tray And Unlink
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    1000
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==True    fswin_Unlink Application    ${v_libName}
+
+fswin_Unlink Application
+    [Arguments]    ${v_libName}=Remote
+    fswin_Click FileString Icon At System Tray    ${v_libName}
+    ${v_isOpened}=    Run Keyword And Return Status    fswin_Verify Menu From Tray Icon Is Opened    ${v_libName}
+    Run Keyword If    ${v_isOpened}==False    fswin_Click FileString Icon At System Tray    ${v_libName}
+    fswin_Click Setting Button At Menu From Tray Icon    ${v_libName}
+    fswin_Verify Context Menu From Setting Button Is Opened    ${v_libName}
+    fswin_Click Device Setting At Context Menu From Setting Button    ${v_libName}
+    fswin_Verify Device Settings Is Opened    ${v_libName}
+    fswin_Click Unlink Button At Device Settings    ${v_libName}
+    fswin_Verify Warning Popup After Click Unlink This Computer Is Opened    ${v_libName}
+    fswin_Click Yes Button At Warning Popup After Click On Unlink This Computer    ${v_libName}
+    fswin_Verify Sign In Screen Is Opened    ${v_libName}
+
+fswin_Hover Mouse In FS Icon At System Tray
+    [Arguments]    ${v_libName}=Remote
+    : FOR    ${v_index}    IN RANGE    0    3
+    \    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    1000
+    \    Exit For Loop If    ${v_isFSIconAtSystemTrayExist}==False
+    \    Run Keyword    ${v_libName}. Rn Hover Mouse    ${gmwin_systemTray[0]}
+    \    Sleep    1s
+
+fswin_Verify All Files In FileString Received Files Folder Are Deleted
+    Comment    Verify All fcs files have been deleted
+    ${v_numberOfFiles}=    Count Files In Directory    ${v_fsLocation}/FileString Received Files
+    Should Be Equal As Numbers    ${v_numberOfFiles}    0
+
+fswin_Click FileString Icon At System Tray
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==False    Fail    FileString icon at system tray did not exist
+    Run Keyword    ${v_libName}.Rn Right Click Element    ${gmwin_systemTray[0]}
+
+fswin_Verify Context Menu From Setting Button Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isContextMenuExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isContextMenuExist}==False    Fail    Context menu from setting button is not opened
+
+fswin_Click Device Setting At Context Menu From Setting Button
+    [Arguments]    ${v_libName}=Remote
+    ${v_isDeviceSettingExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isDeviceSettingExist}==False    Fail    Device Setting menu item from Setting Button did not exit
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuFromSettingButton[2]}
+
+fswin_Verify Device Settings Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isDeviceSettingExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isDeviceSettingExist}==False    Fail    Device Setting form is not opened
+
+fswin_Click Unlink Button At Device Settings
+    [Arguments]    ${v_libName}=Remote
+    ${v_isUnlinkButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isUnlinkButtonExist}==False    Fail    Unlink This Computer button did not exist in Device Settings screen
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_deviceSettings[5]}
+
+fswin_Verify Warning Popup After Click Unlink This Computer Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isUnlinkPopupExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_afterClickUnlinkThisComputerButton[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isUnlinkPopupExist}==False    Fail    Warning pop-up after click on Unlink This Computer button is not opened
+
+fswin_Click Yes Button At Warning Popup After Click On Unlink This Computer
+    [Arguments]    ${v_libName}=Remote
+    ${v_isYesButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_afterClickUnlinkThisComputerButton[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isYesButtonExist}==False    Fail    Yes button in Warning popup after click on Unlink This Computer button did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_afterClickUnlinkThisComputerButton[3]}
+
+fswin_Close Device Settings Form
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCancelButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[18]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isCancelButtonExist}==False    Fail    Cancel button on Device Settings Form did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_deviceSettings[18]}
+
+fswin_Close FileString From Task Manager
+    Run    taskkill /F /IM FileString.exe /T
+
+fswin_Verify FileString Icon Is Not At System Tray
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    1000
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==True    Fail    FileString icon is still at system tray
+
+fswin_Left Click FileString Icon At System Tray
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSIconAtSystemTrayExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_systemTray[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSIconAtSystemTrayExist}==False    Fail    FileString icon at system tray did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_systemTray[0]}

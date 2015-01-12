@@ -1,0 +1,111 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../Resources/Windows/SignInKeywords.txt
+Resource          ../../Resources/Windows/Quit_UnlinkApplication.txt
+Resource          ../../Resources/Windows/CongratulationFormSetUpWizard.txt
+
+*** Test Cases ***
+fs[8365]_Select Take a Tour - Open Tour
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}
+    ...    ${v_dataInFirstSheet[3]}
+    fswin_Click Next Button
+    fswin_Verify FileString Tour Is Opened
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Tour    fswin_Close FileString Folder    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    fswin_Quit Application
+
+fs[8371]_Open FS folder after close Tour
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}
+    ...    ${v_dataInFirstSheet[3]}
+    fswin_Click Next Button
+    fswin_Verify FileString Tour Is Opened
+    fswin_Close FileString Tour
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close FileString Folder    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[8375]_Select "Open fcs files" - Enable "Next" button when select a fcs file
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}
+    ...    ${v_dataInFirstSheet[3]}
+    fswin_Select Open Received Files...
+    Log    Verify next button is disable
+    fswin_Veirfy Next Button Is Disabled
+    fswin_Select Second Item
+    Sleep    3s
+    fswin_Veirfy Next Button Is Enabled
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Congratulation Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[8377]_Check to select all fcs files
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}
+    ...    ${v_dataInFirstSheet[3]}
+    fswin_Select Open Received Files...
+    Log    Verify next button is disable
+    fswin_Veirfy Next Button Is Disabled
+    Comment    Wait for all items have been downloaded
+    fswin_Wait For All Fles Downloaded In Congratulation Screen
+    Comment    Check on select all item checkbox (at header)
+    fswin_Select All Items In Congratulation Screen
+    Comment    Verify next button is enable
+    fswin_Veirfy Next Button Is Enabled
+    Comment    Verify all items have been checked
+    fswin_Verify All Items Have Been Selected
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Congratulation Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[8385]_Hight ligh a Red text "No Received file" and disable "Next" button when has not got any fcs file
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}
+    ...    ${v_dataInFirstSheet[1]}    AND    fs_loadDataFromFileNewVersion    ${v_congratulationFormSetUpWizardDataFile}
+    Comment    Select open received files radio button
+    fswin_Select Open Received Files...
+    Comment    Verify error message
+    fswin_Verify No Received File Exist    ${v_data[0]}
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Congratulation Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[8389]_Check "Downloading" process bar when no file downloaded
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}    ${v_dataInFirstSheet[3]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}
+    ...    ${v_dataInFirstSheet[1]}
+    Comment    Select open received files radio button
+    fswin_Select Open Received Files...
+    Sleep    3s
+    Comment    Verify progress bar is invisible
+    fswin_Verify Progress Bar Is Invisible
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Congratulation Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[8391]_Check "Downloading" process bar when downloading file
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}
+    ...    ${v_dataInFirstSheet[3]}
+    fswin_Select Open Received Files...
+    Sleep    5s
+    Log    Verify progress bar is visible
+    fswin_Verify Progress Bar Is Visible
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Congratulation Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[8395]_Check "Downloading" process bar when all file has been downloaded
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataInFirstSheet    ${v_congratulationFormSetUpWizardDataFile}    AND
+    ...    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[2]}
+    ...    ${v_dataInFirstSheet[3]}
+    fswin_Select Open Received Files...
+    Sleep    5s
+    Comment    Verify Progress-bar is finished (invisible)    Wait for keyword success in 5 minutes
+    fswin_Verify Progressbar When All Files Downloaded
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close Congratulation Form    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application

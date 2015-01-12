@@ -1,0 +1,40 @@
+*** Settings ***
+
+*** Variables ***
+${tl_APIKey}      6548fe711c80a512412c88a44817a7f9
+${tl_testPlanID}    16840
+${tl_buildDescription}    This is test automation running on robot framework
+${tl_isReportToTestlink}    TRUE    # TRUE or FALSE
+
+*** Keywords ***
+TestCase Pass
+    Report TC Result    ${v_testcaseID}    ${v_buildID}    p    ${TEST_MESSAGE}
+
+TestCase Fail
+    ReportTCResult    ${v_testcaseID}    ${v_buildID}    f    ${TEST_MESSAGE}
+
+TestCase Result
+    [Documentation]    If testcase level test status message is needed then use variable ${TEST_STATUS} and if suite level status message is needed, use ${SUITE_STATUS}. If you use SUITE_STATUS for a suite that has 10 test cases and even if one fails, the whole test suite is marked as fail.
+    Run Keyword If    '${TEST_STATUS}' == 'PASS'    TestCase Pass
+    Run Keyword If    '${TEST_STATUS}' == 'FAIL'    TestCase Fail
+
+Evaluate TestCase ID
+    [Documentation]    Test cases in Robot Frameowrk should be named as "ID_xxxx-Test Case Name" where xxxx is the internal ID of the test case in TestLink.
+    Set Test Variable    ${v_getTestCaseName}    ${TEST_NAME}
+    ${v_testcaseID} =    GetTestCaseIDFromTestName    ${v_getTestCaseName}
+    Set Test Variable    ${v_testcaseID}    ${v_testcaseID}
+
+Create New Build
+    [Documentation]    New build is created by getting the current timestamp. "Create New Build" keyword should be used in "Prerequisites" section of the Robot Framework.
+    ${v_buildID} =    Create Build
+    Set Global Variable    ${v_buildID}
+
+Use Existing Build
+    ${v_buildID} =    ExistingBuild
+    Set Global Variable    ${v_buildID}
+
+Use TestLink
+    Run Keyword If    '${tl_isReportToTestlink}'=='TRUE'    Evaluate TestCase ID
+
+Report Test Status
+    Run Keyword If    '${tl_isReportToTestlink}'=='TRUE'    TestCase Result

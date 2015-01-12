@@ -1,0 +1,41 @@
+*** Settings ***
+Resource          BusinessKeywordsForAndroid.txt
+Library           DatabaseLibrary
+Resource          D:\\NguyenDuyLinh\\FSAndroid\\FileString.Git.AT\\FileString\\Resources\\Windows\\SignUpKeywords.txt
+Library           adodbapi
+Resource          D:\\NguyenDuyLinh\\FSAndroid\\FileString.Git.AT\\FileString\\Variables\\WinVarialbes.txt
+
+*** Keywords ***
+fsand_Input Email Address_Sign Up
+    [Arguments]    ${v_EmailAdress}
+    Input Text    ${SignUp_EmailAddress}    ${v_EmailAdress}
+
+fsand_Input Password_Sign Up
+    [Arguments]    ${v_Password}
+    Input Password    ${SignUp_CreatePassword}    ${v_Password}
+
+fsand_Input First Name
+    [Arguments]    ${v_FirstName}
+    Input Text    ${SignUp_Fistname}    ${v_FirstName}
+
+fsand_Input Last Name
+    [Arguments]    ${v_LastName}
+    Input Text    ${SignUp_Lastname}    ${v_LastName}
+
+fsand_Delete User Information In Database
+    [Arguments]    ${v_emailAddress}
+    #    Connect to database
+    ${v_isConnectedToDatabase}=    Run Keyword And Ignore Error    DatabaseLibrary.Connect To Database Using Custom Params    adodbapi    'Provider=SQLOLEDB.1;Data Source=${v_databaseSource};Initial Catalog=${v_databaseName};User Id=${v_databaseUsername};Password=${v_databaseUserPassword};'
+    Run Keyword If    '${v_isConnectedToDatabase[0]}'=='FAIL'    Fail    Could not connect to database, the error was: "${v_isConnectedToDatabase[1]}"
+    #    Get current account ID based on its email address
+    ${v_queryResult}=    DatabaseLibrary.Query    select * from UserEmailAddress where EmailAddress='${v_emailAddress}'
+    ${v_userID}=    Set Variable    ${v_queryResult[0][1]}
+    #    Delete 1: from RegisteredDevice table
+    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM wizardUser where UserID=(SELECT UserID from [user] where username='${v_emailAddress}') ; DELETE FROM [User] WHERE Username='${v_emailAddress}'
+    #    Delete 2: from ServicePreference table
+    Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM ServicePreference WHERE UserID='${v_userID}'
+    Comment    #    Delete 3: from UserEmailAddress table
+    Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM UserEmailAddress WHERE EmailAddress='${v_emailAddress}'
+    Comment    #    Delete 4: from [User] table
+    Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM [User] WHERE Username='${v_emailAddress}'
+    Comment    DatabaseLibrary.Disconnect From Database

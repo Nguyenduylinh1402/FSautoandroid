@@ -1,0 +1,48 @@
+*** Settings ***
+Resource          BusinessKeywordsInWindows.txt
+
+*** Variables ***
+${v_propertiesOfSentFilesDataFile}    ${CURDIR}/../../DataSet/Windows/PropertiesOfSentFIle.xlsx
+
+*** Keywords ***
+fswin_Get List Of Recipient And Verify Sorted
+    [Arguments]    ${v_libName}=Remote
+    Comment    Sleep 3s for loading recipients
+    Sleep    3s
+    ${v_listOfUser}=    Create List
+    : FOR    ${v_index}    IN RANGE    1    100
+    \    ${v_indexInString}=    Convert To String    ${v_index}
+    \    ${v_elementLocator}=    Replace String    ${gmwin_fileInformationPopup[9]}    <<index>>    ${v_indexInString}
+    \    ${v_currentUser}=    Run Keyword And Ignore Error    ${v_libName}.Rn Get Text    ${v_elementLocator}
+    \    Exit For Loop If    '${v_currentUser[0]}'=='FAIL'
+    \    Append To List    ${v_listOfUser}    ${v_currentUser[1]}
+    #    Verify item in list are sorted
+    ${v_sortedList}=    Evaluate    sorted(${v_listOfUser},key=str.lower)
+    ${v_isSorted}=    Evaluate    ${v_sortedList}==${v_listOfUser}
+    Run Keyword If    ${v_isSorted}==False    Fail    Email addresses are not sorted from A to Z in File Information Pop-up
+
+fswin_Verify All Infomation In Detail Table
+    [Arguments]    ${v_fileType}    ${v_fileSize}    ${v_pages}    ${v_numberOfRecipients}    ${v_view}    ${v_viewer}
+    ...    ${v_totalViewTime}    ${v_averageViewTime}    ${v_lastShareTime}    ${v_lastViewTime}    ${v_lastActivityTime}    ${v_libName}=Remote
+    Log    File Type
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[10]}    ${v_fileType}
+    Log    File Size
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[11]}    ${v_fileSize}
+    Log    Pages
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[12]}    ${v_pages}
+    Log    Number of recipients
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[13]}    ${v_numberOfRecipients}
+    Log    View
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[14]}    ${v_view}
+    Log    Viewers
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[15]}    ${v_viewer}
+    Log    Total view time
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[16]}    ${v_totalViewTime}
+    Log    Average view time
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[17]}    ${v_averageViewTime}
+    Log    Last share time
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[18]}    ${v_lastShareTime}
+    Log    Last view time
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[19]}    ${v_lastViewTime}
+    Log    Last activity Time
+    Run Keyword    ${v_libName}.Rn Element Text Should Be In X Time    ${gmwin_fileInformationPopup[20]}    ${v_lastActivityTime}

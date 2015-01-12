@@ -1,0 +1,179 @@
+*** Settings ***
+Resource          ../../Variables/WinVarialbes.txt
+Library           Screenshot
+Resource          ../TestlinkResources.txt
+Resource          ../CommonKeywordsForAllPlatforms.txt
+Library           String
+Library           Collections
+Library           OperatingSystem
+
+*** Keywords ***
+fswin_Start Application
+    [Arguments]    ${v_pathToApplication}    ${v_libName}=Remote
+    Run Keyword If    ${v_isDebug}==True    Run Keyword    ${v_libName}.Rn Start Debug
+    Run Keyword    ${v_libName}.Rn Run Application    ${v_pathToApplication}
+
+fswin_Quit Application
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCloseButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_windowsForm[4]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isCloseButtonExist}==False    Fail    Could not find close button in FileString windows
+    Sleep    0.1
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_windowsForm[4]}
+
+fswin_Close FileString Tour
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileStringTourOpened}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileStringTour[16]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileStringTourOpened}==False    Fail    FileString tour did not open
+    Sleep    0.5
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_fileStringTour[16]}
+
+fswin_Capture Screen Shoot If Fail
+    [Documentation]    This keyword will check status of the variable ${TEST_STATUS}
+    ...    - If value is: PASS, it won't do anything
+    ...    - If value is FAIL, it will capture whole screen shoot and emmebed it into test report
+    ${v_isCaptureInTestcase}=    Run Keyword And Return Status    Variable Should Exist    ${TEST_STATUS}
+    Run Keyword If    ${v_isCaptureInTestcase}==True    Run Keyword If    '${TEST_STATUS}'=='FAIL'    Screenshot.Take Screenshot
+    ${v_isCaptureInTestsuite}=    Run Keyword And Return Status    Variable Should Exist    ${SUITE_STATUS}
+    Run Keyword If    ${v_isCaptureInTestsuite}==True    Run Keyword If    '${SUITE_STATUS}'=='FAIL'    Screenshot.Take Screenshot
+
+fswin_Navigate To Sign Up Screen
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCreateAccountLinkExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signInScreen[7]}
+    Run Keyword If    ${v_isCreateAccountLinkExist}==False    Fail    Could not find Create a FileString Account link in FileString Sign Up windows
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_signInScreen[7]}
+
+fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray
+    [Arguments]    ${v_libName}=Remote
+    #    If Sign In successful, get current state (1. Congratulation form, 2. FileString at system tray)
+    ${v_isCongratulationFormExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_congratulationScreen[0]}    100
+    Run Keyword If    ${v_isCongratulationFormExist}==True    Set Suite Variable    ${v_currentScreen}    1    ELSE    Set Suite Variable
+    ...    ${v_currentScreen}    2
+
+fswin_Close Congratulation Form
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCloseButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_windowsForm[4]}
+    Run Keyword If    ${v_isCloseButtonExist}==False    Fail    Could not find close button in FileString windows
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_windowsForm[4]}
+
+fswin_Close Congratulation Form If Exist
+    [Arguments]    ${v_libName}=Remote
+    Run Keyword If    '${v_currentScreen}'=='1'    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_windowsForm[4]}
+
+fswin_Click Back Button
+    [Arguments]    ${v_libName}=Remote
+    ${v_isBackButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_signUpScreen[9]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isBackButtonExist}==False    Fail    Back button did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_signUpScreen[9]}
+
+fswin_Click Continue Button At Verify Email Address Screen
+    [Arguments]    ${v_libName}=Remote
+    ${v_isContinueButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_verifyEmailAddressScreen[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isContinueButtonExist}==False    Fail    Continue button at "Verify Email Address" screen did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_verifyEmailAddressScreen[3]}
+
+fswin_Open Windows Explorer
+    [Arguments]    ${v_libName}=Remote
+    Run Keyword    ${v_libName}.Rn Send Keys    \    {LWIN down}{Ekey}{LWIN up}
+
+fswin_Close FileString Folder
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileStringFolderOpened}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gwin_fileStringFolder[1]}
+    Run Keyword If    ${v_isFileStringFolderOpened}==False    Fail    FileString folder did not open
+    Run Keyword    ${v_libName}.Rn Click Element    ${gwin_fileStringFolder[1]}
+
+fswin_Close Send A File Popup
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCancelButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_sendAFilePopup[6]}
+    Run Keyword If    ${v_isCancelButtonExist}==False    Fail    Cancel button did not exist in Send A File popup
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_sendAFilePopup[6]}
+
+fswin_Click File Information In Context Menu Of File Owner
+    [Arguments]    ${v_libName}=Remote
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuWhenRightClick[16]}
+
+fswin_Verify File Information Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileInformationOpened}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileInformationPopup[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileInformationOpened}==False    Fail    Windows File Information is not opened
+
+fswin_Close File Information Popup
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCloseButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileInformationPopup[8]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isCloseButtonExist}==False    Fail    Close button did not exist in File Information popup
+    Sleep    0.3
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_fileInformationPopup[8]}
+
+fswin_Click Recent Sent Files On Menu From Tray Icon At System Tray
+    [Arguments]    ${v_libName}=Remote
+    ${v_isRecentSentFilesExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_menuFromTrayIcon[5]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isRecentSentFilesExist}==False    Fail    Recent Sent Files menu item on menu from tray icon is not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_menuFromTrayIcon[5]}
+
+fswin_Close Your Preferences Form
+    [Arguments]    ${v_libName}=Remote
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_yourPreferences[35]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    Your preferences form did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_yourPreferences[35]}
+
+fswin_Verify Element Is Enabled In File Information
+    [Arguments]    ${v_elementLocator}    ${v_elementName}    ${v_libName}=Remote
+    Sleep    3s
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${v_elementLocator}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    "${v_elementName}" is not exist in File Information Popup
+    ${v_isEnabled}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${v_elementLocator}    Enabled
+    Run Keyword If    ${v_isEnabled}==False    Fail    "${v_elementName}" is disabled while expecting enabled
+
+fswin_Verify Element Is Disabled In File Information
+    [Arguments]    ${v_elementLocator}    ${v_elementName}    ${v_libName}=Remote
+    Sleep    3s
+    ${v_isExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${v_elementLocator}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExist}==False    Fail    "${v_elementName}" is not exist in File Information Popup
+    ${v_isEnabled}=    Run Keyword    ${v_libName}.Rn Get Element Attribute    ${v_elementLocator}    Enabled
+    Run Keyword If    ${v_isEnabled}==True    Fail    "${v_elementName}" is enabled while expecting disabled
+
+fswin_Click Quit FileString
+    [Arguments]    ${v_libName}=Remote
+    ${v_isQuitAppButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuFromSettingButton[6]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isQuitAppButtonExist}==False    Fail    Quit Application button is not exist in Menu setting in menu from tray icon
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuFromSettingButton[6]}
+
+fswin_Close All This PC Folder
+    [Arguments]    ${v_libName}=Remote
+    : FOR    ${v_index}    IN RANGE    50
+    \    ${v_isThisPCFolderExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_thisPCFolder[0]}    2000
+    \    Exit For Loop If    ${v_isThisPCFolderExist}==False
+    \    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_thisPCFolder[0]}
+    \    Sleep    0.5
+
+fswin_Close FileString Viewer
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFSViewerExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileStringViewer[3]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFSViewerExist}==False    Fail    FileString viewer is not exist
+    Sleep    0.5
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_fileStringViewer[3]}
+
+fswin_Click Show More Button
+    [Arguments]    ${v_libName}=Remote
+    ${v_isShowMoreButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_sendAFilePopup[4]}
+    Run Keyword If    ${v_isShowMoreButtonExist}==False    Fail    Show More button is not exist in Send A File popup
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_sendAFilePopup[4]}
+
+fswin_Uncheck Display Water Mark
+    [Arguments]    ${v_libName}=Remote
+    ${v_isDisplayWaterMarkExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_sendAFilePopup[7]}
+    Run Keyword If    ${v_isDisplayWaterMarkExist}==False    Fail    Display watermark checkbox is not exist in Send A File popup
+    Run Keyword    ${v_libName}.Rn Uncheck    ${gmwin_sendAFilePopup[7]}
+
+fswin_Set Zoom Ratio For FileString Viewer
+    [Arguments]    ${v_ratio}=100%    ${v_libName}=Remote
+    ${v_is Ratio Combobox Exist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_fileStringViewer[16]}
+    Run Keyword If    ${v_is Ratio Combobox Exist}==False    Fail    Zoom Ratio is not exist in FileString viewer
+    Run Keyword    ${v_libName}.Rn Clear Text    ${gmwin_fileStringViewer[16]}
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_fileStringViewer[16]}
+    Sleep    0.1
+    @{v_inputValue}=    Split String To Characters    ${v_ratio}
+    : FOR    ${v_aCharacter}    IN    @{v_inputValue}
+    \    Run Keyword    ${v_libName}.Rn Send Keys    \    ${v_aCharacter}
+    \    Sleep    0.1
+    Run Keyword    ${v_libName}.Rn Send Keys    \    {return}
+    Sleep    1s

@@ -1,0 +1,22 @@
+*** Settings ***
+Resource          ../../Variables/Variables.txt
+
+*** Keywords ***
+fsand_OpenFileStringApplication
+    Open Application    http://localhost:4723/wd/hub
+
+fsand_ChangeEnvironment
+    [Arguments]    ${v_environment}
+    [Documentation]    name=Production|Staging|Development
+    Input Password    ${SignIn_Password}    opensesame
+    Click Element    name=${v_environment}
+    Click Element    ${OK_Button}
+
+fsand_ClickPositiveButton
+    Click Element    ${OK_Button}
+
+fsand_ClickUp
+    Click Element    Action_Up
+
+fsand_ClickHome
+    Click Element    Action_Home

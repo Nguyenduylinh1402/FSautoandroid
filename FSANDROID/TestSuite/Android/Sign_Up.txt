@@ -1,0 +1,61 @@
+*** Settings ***
+Resource          ../../Resources/Android/SignUpKeywords.txt
+Library           AppiumLibrary
+
+*** Test Cases ***
+fs[1234]_Sign up with valid email never sign up before and password
+    fs_loadDataFromFileNewVersion    ${CURDIR}/Data.xlsx
+    fsand_OpenFileStringApplication
+    #    fsand_ClickUp    sta25.114@yopmail.com
+    #    Del User on DataBase
+    fsand_Delete User Information In Database    ${v_data[2]}
+    #    Change environment
+    fsand_ChangeEnvironment    Staging
+    #    Click Sign Up Now to move to Sign Up form
+    Click Element    ${SignIn_SignUp}
+    #    Input First Name
+    fsand_Input First Name    ${v_data[0]}
+    #    Input Last Name
+    fsand_Input Last Name    ${v_data[1]}
+    #    input email address
+    fsand_Input Email Address_Sign Up    ${v_data[2]}
+    #    input password
+    fsand_Input Password_Sign Up    ${v_data[3]}
+    #    Click Sign Up Button
+    Click Element    ${SignUp_CreateButton}
+    #    Verify Title "Verify Email after Sign UP"
+    Wait Until Page Contains    ${v_data[4]}    20s    #    ${Title_SignUp_VerifyEmail}    text=${v_data[4]}
+    #    Verify Mesage "Verify Email after Sign UP "
+    Wait Until Page Contains    ${v_data[5]}    20s    #    ${Message_SignUp_VerifyEmail}    text=${v_data[5]}
+    #    Click OK button
+    fsand_ClickPositiveButton
+
+Sign up with Secondary email but not verify
+
+Email has "space" in first and end letter
+
+Long First name, Last name (<= 128 characters)
+
+Password has special characters
+
+Empty any value
+    [Setup]    fsand_Navigate To Sign Up Screen
+    fsand_Input Email Address_Sign Up
+    fsand_Input Password_Sign Up
+
+Invalid Email
+
+Password < 4 & > 36 character
+
+First name, Last name ( > 128 characters)
+
+Email signed up before
+
+Email is secondary email already
+
+First name, last name has pecial character: < > ? : " | * \ /
+
+Without network
+
+asd
+    fsand_Delete User Information In Database    sta25.114@yopmail.com

@@ -1,0 +1,225 @@
+*** Settings ***
+Resource          BusinessKeywordsInWindows.txt
+Resource          CommonKeywordsInWindows.txt
+Resource          Quit_UnlinkApplication.txt
+
+*** Variables ***
+${v_shareNewFileDataFile}    ${CURDIR}/../../DataSet/Windows/ShareNewFile.xlsx
+${v_pathOfFileTypeSupportedFolder}    ${CURDIR}/../../DataSet/Windows/FileTypeSupported/
+${v_pathOfFileTypeUnsupportedFolder}    ${CURDIR}/../../DataSet/Windows/FileTypeNotSupported/
+${v_pathOfSyncedImages}    ${CURDIR}/../../DataSet/Windows/SyncedPicturesBased/
+
+*** Keywords ***
+fswin_Get FileString Location
+    [Arguments]    ${v_libName}=Remote
+    fswin_Click FileString Icon At System Tray    ${v_libName}
+    fswin_Verify Menu From Tray Icon Is Opened    ${v_libName}
+    fswin_Click Setting Button At Menu From Tray Icon    ${v_libName}
+    fswin_Verify Context Menu From Setting Button Is Opened    ${v_libName}
+    fswin_Click Device Setting At Context Menu From Setting Button    ${v_libName}
+    fswin_Verify Device Settings Is Opened    ${v_libName}
+    fswin_Get FileString Location In Device Settings Form    ${v_libName}
+    fswin_Close Device Settings Form    ${v_libName}
+
+fswin_Get FileString Location In Device Settings Form
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileStringLocationExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_deviceSettings[7]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileStringLocationExist}==False    Fail    FileString location did not exist in Device Settings form
+    ${v_fsLocation}=    Run Keyword    ${v_libName}.Rn Get Text    ${gmwin_deviceSettings[7]}
+    Set Global Variable    ${v_fsLocation}
+
+fswin_Open FileString Folder
+    [Arguments]    ${v_libName}=Remote
+    fswin_Open Windows Explorer    ${v_libName}
+    fswin_Get FileString Location    ${v_libName}
+    ${v_isExplorerOpened}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    /form[@title='This PC']/element[@class='WorkerW']/?/?/element[@controlid='41477']//toolbar[@controlid='1001']    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isExplorerOpened}==False    Fail    Explorer folder is not opened
+    Run Keyword    ${v_libName}.Rn Click Element    /form[@title='This PC']/element[@class='WorkerW']/?/?/element[@controlid='41477']//toolbar[@controlid='1001']
+    Run Keyword    ${v_libName}.Rn Send Keys    \    ${v_fsLocation}{return}
+    fswin_Verify FileString Folder Is Opened    ${v_libName}
+    fswin_Maximize FileString Folder    ${v_libName}
+    fswin_Select Detail View    ${v_libName}
+
+fswin_Verify FileString Folder Is Opened
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileStringFolderOpened}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gwin_fileStringFolder[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileStringFolderOpened}==False    Fail    FileString folder did not open
+
+fswin_template_Share File Successful
+    [Arguments]    ${v_filename}    ${v_imageBasedToCompareFileName}    ${v_timeoutOfMessageAfterStringAFile}    ${v_listOfRecipients}    ${v_libName}=Remote
+    fswin_Open FileString Folder    ${v_libName}
+    fswin_Copy File    ${v_pathOfFileTypeSupportedFolder}/${v_filename}    ${v_fsLocation}
+    fswin_Search A File And Right Click    FileString    ${v_filename}    ${v_fsLocation}    ${v_libName}
+    fswin_Select FileString On Context Menu When Right Click On A File    ${v_libName}
+    fswin_Select String This File    ${v_libName}
+    fswin_Click Continue Button When PDF Tron Is Down    ${v_libName}
+    fswin_Uncheck Display Watermark When String A File    ${v_libName}
+    fswin_Input Recipients And Click Send Button    ${v_listOfRecipients}    ${v_libName}
+    fswin_Click Continue If File Is PPT Or PPTX    ${v_filename}    ${v_libName}
+    fswin_Verify Message After String A File    ${v_filename}    ${v_timeoutOfMessageAfterStringAFile}    ${v_libName}
+    fswin_Verify Overlay Icon    FileString    ${v_filename}    ${v_imageBasedToCompareFileName}    ${v_fsLocation}    ${v_libName}
+
+fswin_Select Detail View
+    [Arguments]    ${v_libName}=Remote
+    Comment    Click on menu View
+    ${v_result}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gwin_fileStringFolder[3]}
+    Run Keyword If    ${v_result}==True    ${v_libName}.Rn Click Element    ${gwin_fileStringFolder[3]}
+    Comment    Select detail view
+    Sleep    0.1
+    ${v_result}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gwin_fileStringFolder[4]}
+    Run Keyword If    ${v_result}==True    Run Keyword    ${v_libName}.Rn Click Element    ${gwin_fileStringFolder[4]}
+    Comment    Refresh FS folder
+    Run Keyword    ${v_libName}.Rn Send Keys    ${gwin_fileStringFolder[0]}    {F5}
+
+fswin_Maximize FileString Folder
+    [Arguments]    ${v_libName}=Remote
+    ${v_isMaximizeButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gwin_fileStringFolder[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isMaximizeButtonExist}==False    Fail    Maximize button did not exist
+    ${v_isMaximize}=    Run Keyword    ${v_libName}.Rn Get Text    ${gwin_fileStringFolder[2]}
+    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_isMaximize}    Maximize
+    Run Keyword If    ${v_result}==True    ${v_libName}.Rn Click Element    ${gwin_fileStringFolder[2]}
+    Sleep    0.1
+
+fswin_Copy File
+    [Arguments]    ${v_pathToSourceFile}    ${v_pathToDestinationFolder}
+    ${v_fileIsExist}=    Run Keyword And Return Status    OperatingSystem.Copy File    ${v_pathToSourceFile}    ${v_pathToDestinationFolder}
+    Run Keyword If    ${v_fileIsExist}==False    Fail    Source file or destination file is not exist
+    Sleep    0.5
+
+fswin_Select String This File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isStringThisFileContextMenuExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuWhenRightClick[1]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isStringThisFileContextMenuExist}==False    Fail    String This File context menu did not exist
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuWhenRightClick[1]}
+
+fswin_Select FileString On Context Menu When Right Click On A File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileStringMenuExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuWhenRightClick[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileStringMenuExist}==False    Fail    FileString context menu did not exist after right click on a file
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_contextMenuWhenRightClick[0]}
+
+fswin_Input Recipients And Click Send Button
+    [Arguments]    ${v_listOfRecipients}    ${v_libName}=Remote
+    ${v_isErrorWhenGetType}=    Run Keyword And Ignore Error    Evaluate    type(${v_listOfRecipients})
+    ${v_isInstanceOfList}=    Set Variable    ${v_isErrorWhenGetType[1]}
+    ${v_isInstanceOfList}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_isInstanceOfList}    <type 'list'>
+    ${v_listOfRecipients}=    Run Keyword If    ${v_isInstanceOfList}==True    Set Variable    ${v_listOfRecipients}    ELSE    Create List
+    ...    ${v_listOfRecipients}
+    ${v_numberOfRecipients}=    Get Length    ${v_listOfRecipients}
+    : FOR    ${v_index}    IN RANGE    0    ${v_numberOfRecipients}
+    \    Run Keyword    ${v_libName}.Rn Input Text Without Clear Text    ${gmwin_sendAFilePopup[3]}    ${v_listOfRecipients[${v_index}]}
+    \    Run Keyword    ${v_libName}.Rn Input Text Without Clear Text    ${gmwin_sendAFilePopup[3]}    ;
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_sendAFilePopup[5]}
+
+fswin_Verify Message After String A File
+    [Arguments]    ${v_fileName}    ${v_timeout}    ${v_libName}=Remote
+    ${v_message}=    Replace String    The file “<<FileName>>” was successfully sent to your recipients.    <<FileName>>    ${v_fileName}
+    ${v_result}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_notificationWhenSentFileSuccessfully[3]}    ${v_timeout}
+    Run Keyword If    ${v_result}==False    Fail    Successfully sent file message has not been appear in ${v_timeout} miliseconds
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_notificationWhenSentFileSuccessfully[3]}    ${v_message}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Message after String A File is incorrect, error message was: "${v_result[1]}"
+
+fswin_Click Continue Button When PDF Tron Is Down
+    [Arguments]    ${v_libName}=Remote
+    ${v_isPopupExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_pdfTronIsDownPopup[5]}    500
+    Run Keyword If    ${v_isPopupExist}==True    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_pdfTronIsDownPopup[5]}
+
+fswin_Click Continue If File Is PPT Or PPTX
+    [Arguments]    ${v_filename}    ${v_libName}=Remote
+    ${v_fileAfterSeparated}=    Split String    ${v_filename}    .
+    ${v_isPPTorPPTX}=    Run Keyword If    '${v_fileAfterSeparated[-1].upper()}'=='PPT' or '${v_fileAfterSeparated[-1].upper()}'=='PPTX'    Set Variable    ${True}    ELSE    Set Variable
+    ...    ${False}
+    ${v_isPopupExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_shareFilePowerPointWarningPopup[4]}    100
+    Run Keyword If    ${v_isPPTorPPTX}==True and ${v_isPopupExist}==False    Fail    Popup is not exist
+    Run Keyword If    ${v_isPPTorPPTX}==True and ${v_isPopupExist}==True    ${v_libName}.Rn Click Element    ${gmwin_shareFilePowerPointWarningPopup[4]}
+
+fswin_Verify Overlay Icon
+    [Arguments]    ${v_folderName}    ${v_fileName}    ${v_imageBasedToCompareFilename}    ${v_folderLocation}=${EMPTY}    ${v_libName}=Remote
+    ${v_numberOfItems}=    Run Keyword If    '${v_folderLocation}'!='${EMPTY}'    Count Items In Directory    ${v_folderLocation}    ELSE    Evaluate
+    ...    30
+    #    Find index of file
+    : FOR    ${v_index}    IN RANGE    1    ${v_numberOfItems}
+    \    ${v_isMatch}=    Run Keyword And Return Status    ${v_libName}.Rn Element Text Should Be    /form[@title='${v_folderName}']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]/text    ${v_fileName}
+    \    Exit For Loop If    ${v_isMatch}==True
+    Run Keyword If    ${v_isMatch}==False    Fail    File ${v_fileName} is not exist in ${v_folderName} folder
+    #    Get locator of element's image
+    ${v_indexTemp}=    Evaluate    str(${v_index})
+    ${v_elementLocator}=    Replace String    /form[@title='${v_folderName}']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[<<index>>]/picture[@classname='UIImage']    <<index>>    ${v_indexTemp}
+    : FOR    ${v_index}    IN RANGE    0    3
+    \    ${v_pathToTempImage}=    Generate Random String    20    [LOWER]
+    \    ${v_pathToTempImage}    Catenate    SEPARATOR=    ${v_pathToTempImage}    .jpg
+    \    Run Keyword    ${v_libName}.Rn Get Image    ${v_elementLocator}    ${CURDIR}/../../DataSet/Windows/temp/${v_pathToTempImage}
+    \    ${v_result}=    Run Keyword    ${v_libName}.Rn Compare Two Images Using Ranorex    ${CURDIR}/../../DataSet/Windows/temp/${v_pathToTempImage}    ${v_pathOfSyncedImages}/${v_imageBasedToCompareFilename}    0.99
+    \    Run Keyword If    ${v_result}==False    Run Keyword    ${v_libName}.Rn Send Keys    ${gwin_fileStringFolder[0]}    {F5}
+    \    Run Keyword If    ${v_result}==False    Run Keyword    ${v_libName}.Rn Hover Mouse    /form[@title='${v_folderName}']/element[@class='ShellTabWindowClass']//container[@caption='ShellView']/?/?/listitem[${v_index}]/text
+    \    Run Keyword If    ${v_result}==True    Exit For Loop    ELSE    Sleep    2s
+    Run Keyword If    ${v_result}==False    Fail    Overlay icon has not been shown
+
+fswin_Verify Message After Received A File
+    [Arguments]    ${v_fileName}    ${v_firstName}    ${v_lastName}    ${v_timeout}    ${v_libName}=Remote
+    ${v_lenght}=    Get Length    ${v_fileName}
+    ${v_fileName}=    Run Keyword If    ${v_lenght}>5    Get Substring    ${v_fileName}    0    5
+    ...    ELSE    Set Variable    ${v_fileName}
+    ${v_fileName}=    Run Keyword If    ${v_lenght}>5    Catenate    SEPARATOR=    ${v_fileName}    ...
+    ${v_message}=    Replace String    “<<FileName>>” was sent by <<Firstname>> <<Lastname>> and added to your FileString folder.(click to view)    <<FileName>>    ${v_fileName}
+    ${v_message}=    Replace String    ${v_message}    <<Firstname>>    ${v_firstName}
+    ${v_message}=    Replace String    ${v_message}    <<Lastname>>    ${v_lastName}
+    ${v_result}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_notificationWhenSentFileSuccessfully[3]}    ${v_timeout}
+    Run Keyword If    ${v_result}==False    Fail    Successfully received file message has not been appear in ${v_timeout} miliseconds
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_notificationWhenSentFileSuccessfully[3]}    ${v_message}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Message after Received A File is incorrect, error message was: "${v_result[1]}"
+
+fswin_Verify Error Message When String Protected File
+    [Arguments]    ${v_errorMessage}    ${v_fileName}=''    ${v_libName}=Remote
+    ${v_isPopupExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_errorMessageShareFile[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isPopupExist}==False    Fail    Error Message when string a file is not exist
+    ${v_errorMessage}=    Replace String    ${v_errorMessage}    <<FileName>>    ${v_fileName}
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_errorMessageShareFile[1]}    ${v_errorMessage}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Error Message when String an unsupported file is incorrect, error message was: "${v_result[1]}"
+
+fswin_Verify Error Message When String Other File
+    [Arguments]    ${v_errorMessage}    ${v_fileName}=''    ${v_libName}=Remote
+    ${v_isPopupExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_errorMessageShareFile[0]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isPopupExist}==False    Fail    Error Message when string a file is not exist
+    ${v_errorMessage}=    Replace String    ${v_errorMessage}    <<FileName>>    ${v_fileName}
+    ${v_result}=    Run Keyword And Ignore Error    ${v_libName}.Rn Element Text Should Be Replaced Enterkey By Space Trim And Wait Text Appear    ${gmwin_errorMessageShareFile[1]}    ${v_errorMessage}
+    Run Keyword If    '${v_result[0]}'=='FAIL'    Fail    Error Message when String an unsupported file is incorrect, error message was: "${v_result[1]}"
+
+fswin_Close Error Message When String Protected File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCloseButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_errorMessageShareFile[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isCloseButtonExist}==False    Fail    Close button did not exist in Error Popup
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_errorMessageShareFile[2]}
+
+fswin_Close Error Message When String Other File
+    [Arguments]    ${v_libName}=Remote
+    ${v_isCloseButtonExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_errorMessageShareFile[2]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isCloseButtonExist}==False    Fail    Close button did not exist in Error Popup
+    Run Keyword    ${v_libName}.Rn Click Element    ${gmwin_errorMessageShareFile[2]}
+
+fswin_Verify Context Menu Contain Un-supported ChildMenu
+    [Arguments]    ${v_libName}=Remote
+    ${v_isFileTypeNotSupportedExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuWhenRightClick[7]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isFileTypeNotSupportedExist}==False    Fail    Childmenu '(File Type Not Supported)' did not exist in context menu
+    ${v_isViewFileTypeSupportedFileFormatExist}=    Run Keyword    ${v_libName}.Rn Wait For Element Exist    ${gmwin_contextMenuWhenRightClick[8]}    ${v_timeOutInWindows}
+    Run Keyword If    ${v_isViewFileTypeSupportedFileFormatExist}==False    Fail    Childmenu 'View Supported File Formats' did not exist in context menu
+
+fswin_Wait For FileString Is Synced
+    [Arguments]    ${v_libName}=Remote
+    fswin_Click FileString Icon At System Tray    ${v_libName}
+    Comment    Wait for FileString is synced till timeout (5 minutes)
+    ${v_startTime}=    Evaluate    time.time()    time
+    ${v_currentTime}=    Set Variable
+    : FOR    ${v_index}    IN RANGE    1    ${v_syncedLoop}
+    \    ${v_result}=    Run Keyword And Return Status    ${v_libName}.Rn Element Text Should Be    ${gmwin_menuFromTrayIcon[4]}    Synced
+    \    Exit For Loop If    ${v_result}==True
+    \    Sleep    2s
+    \    ${v_currentTime}=    Evaluate    time.time()    time
+    \    ${v_currentTime}=    Evaluate    str(int(round(${v_currentTime}-${v_startTime})))
+    \    Log    FileString has not been synced yet after ${v_currentTime} seconds
+    Run Keyword If    ${v_result}==False    Fail    FileString has not been synced after ${v_currentTime} seconds
+
+fswin_Uncheck Display Watermark When String A File
+    [Arguments]    ${v_libName}
+    fswin_Click Show More Button    ${v_libName}
+    fswin_Uncheck Display Water Mark    ${v_libName}

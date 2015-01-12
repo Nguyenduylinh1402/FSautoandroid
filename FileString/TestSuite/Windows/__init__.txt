@@ -1,0 +1,6 @@
+*** Settings ***
+Suite Setup       fswin_Project Setup    # fswin_Project Setup Use Existing Build
+Suite Teardown    fswin_Project Teardown    # fswin_Project Teardown
+Resource          ../../Resources/Windows/FilestringProjectSetupAndTeardownForWindows.txt
+
+*** Keywords ***

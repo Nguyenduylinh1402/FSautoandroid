@@ -1,0 +1,144 @@
+*** Settings ***
+Suite Setup       Run Keywords    Import Library    Remote    127.0.0.1:8270    AND    fs_loadDataInFirstSheet    ${v_propertiesOfSentFilesDataFile}
+...               AND    fswin_startApplication    ${v_pathToApplicationOnMachine1}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+...               AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Wait For FileString Is Synced
+Suite Teardown    Run Keywords    fswin_Capture Screen Shoot If Fail    AND    fswin_Verify FileString Icon At System Tray And Unlink    AND    fswin_Quit Application    AND
+...               fswin_Delete All Files In FileString Folder    ${v_fsLocation}
+Resource          ../../Resources/Windows/PropertiesOfSentFiles.txt
+Resource          ../../Resources/Windows/ContextMenuOfSentFile.txt
+
+*** Test Cases ***
+fs[2535]_Properties of Sent File is not edit_"Views Report" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "View Report" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[3]}    View Report button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2537]_Properties of Sent File is not edit_"Push update" button is disable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Push Update" button is enable
+    fswin_Verify Element Is Disabled In File Information    ${gmwin_fileInformationPopup[4]}    Push Update button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2539]_Properties of Sent File is not edit_"View Recipient" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "View Recipient" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[5]}    View Recipient button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2541]_Properties of Sent File is not edit_"Add recipient" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Add Recipient" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[6]}    Add Recipient button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2543]_Properties of Sent File is not edit_"Revoked Access" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Revoke Access" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[7]}    Revoke Access button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2545]_Properties of Sent File is not edit_Check "Pencil" button form "Recipients" table (Change recipients rights)
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Pencil" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[21]}    Pencil button
+    # web application is not implemented
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2547]_Properties of Sent File is not edit_Check "X" button form "Recipients" table (Revoke access)
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Delete current user" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[22]}    Delete current user button
+    # web application is not implemented
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2549]_Properties of Sent File is not edit_Check "Details" table
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify all infomation in detail table
+    Comment    fswin_Verify All Infomation In Detail Table
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2552]_Properties of Sent File is edited_"Views Report" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "View Report" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[3]}    View Report button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2554]_Properties of Sent File is edited_"Push update" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Push Update" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[4]}    Push update button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2556]_Properties of Sent File is edited_"View Recipient" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "View Recipient" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[5]}    View Recipient button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2558]_Properties of Sent File is edited_"Add recipient" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Add Recipient" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[6]}    Add Recipient button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2560]_Properties of Sent File is edited_"Revoked Access" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Revoke Access" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[7]}    Revoke Access button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2562]_Properties of Sent File is edited_Check "Pencil" button form "Recipients" table (Change recipients rights)
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Pencil" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[21]}    Pencil button
+    # web application is not implemented
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2564]_Properties of Sent File is edited_Check "X" button form "Recipients" table (Revoke access)
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify "Delete current user" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[22]}    Delete current user button
+    # web application is not implemented
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2566]_Properties of Sent File is edited_Check "Details" table
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify all infomation in detail table
+    Comment    fswin_Verify All Infomation In Detail Table
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2569]_Properties of Sent File has no recipient_Only "Add recipient" button is enable
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Log    Verify only "Add Recipient" button is enable
+    fswin_Verify Element Is Enabled In File Information    ${gmwin_fileInformationPopup[6]}    Add Recipient button
+    Log    The rest buttons are disable
+    fswin_Verify Element Is Disabled In File Information    ${gmwin_fileInformationPopup[3]}    View Report button
+    fswin_Verify Element Is Disabled In File Information    ${gmwin_fileInformationPopup[4]}    Push Update button
+    fswin_Verify Element Is Disabled In File Information    ${gmwin_fileInformationPopup[5]}    View Recipient button
+    fswin_Verify Element Is Disabled In File Information    ${gmwin_fileInformationPopup[7]}    Revoke Access button
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder
+
+fs[2572]_List Recipients_List Recipients sort by name (number , A -Z)
+    [Setup]    Run Keywords    Use TestLink    AND    fs_loadDataFromFileNewVersion    ${v_propertiesOfSentFilesDataFile}    AND
+    ...    fswin_Open FileString Folder, Search A File, Right Click And Select FileString Menu Item    ${v_data[0]}    AND    fswin_Click File Information In Context Menu Of File Owner    AND    fswin_Verify File Information Is Opened
+    Comment    Verify list Of recipients are sorted by A-Z
+    fswin_Get List Of Recipient And Verify Sorted
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Close File Information Popup    fswin_Close FileString Folder

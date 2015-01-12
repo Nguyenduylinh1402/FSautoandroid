@@ -1,0 +1,77 @@
+*** Settings ***
+Suite Setup       Import Library    Remote    127.0.0.1:8270
+Suite Teardown    fswin_Capture Screen Shoot If Fail
+Resource          ../../resources/windows/BusinessKeywordsInWindows.txt
+Resource          ../../Resources/Windows/Quit_UnlinkApplication.txt
+Resource          ../../Resources/Windows/PropertiesOfSentFiles.txt
+
+*** Test Cases ***
+fs[2356]_Unlink- computer from "Device settings" form
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Get FileString Location
+    Comment    Unlink
+    fswin_Unlink Application
+    Comment    Verify all files in FS received files folder are deleted
+    fswin_Verify All Files In FileString Received Files Folder Are Deleted
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2358]_Unlink- computer when sharing files
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Get FileString Location
+    Comment    Share file
+    fswin_Unlink Application
+    fswin_Is Next
+    fswin_template_Share File Successful    ${v_data[0]}    ${v_data[1]}    300000    @{v_listOfEmailAddress}
+    Log    Unlink application
+    fswin_Unlink Application
+    Log    Verify all files in FS received files folder are deleted
+    fswin_Verify All Files In FileString Received Files Folder Are Deleted
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2360]_Unlink- computer when downloading files
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Get FileString Location
+    fswin_Unlink Application
+    fswin_Is Next
+    Comment    Verify all files in FS received files folder are deleted
+    fswin_Verify All Files In FileString Received Files Folder Are Deleted
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2362]_Unlink- computer when opening files
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist    AND    fswin_Get FileString Location
+    fswin_Unlink Application
+    fswin_Is Next
+    Comment    Verify All file are deleted
+    fswin_Verify All Files In FileString Received Files Folder Are Deleted
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    Report Test Status    fswin_Verify FileString Icon At System Tray And Unlink    fswin_Quit Application
+
+fs[2365]_Quit app from Tray Icon
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    fswin_Click FileString Icon At System Tray
+    fswin_Click Setting Button At Menu From Tray Icon
+    fswin_Click Quit FileString
+    fswin_Verify FileString Icon Is Not At System Tray
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    AND    Report Test Status    AND    fswin_Start Application
+    ...    ${v_pathToApplicationOnMachine1}    AND    Sleep    5s    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Quit Application
+
+fs[2367]_Quit app from Start Task Manager
+    [Setup]    Run Keywords    Use TestLink    AND    fswin_Start Application    ${v_pathToApplicationOnMachine1}    AND
+    ...    fs_loadDataInFirstSheet    ${v_QuitUnlinkDataFile}    AND    fswin_Sign In Successful    ${v_dataInFirstSheet[0]}    ${v_dataInFirstSheet[1]}
+    ...    AND    fswin_Verify Current Screen Contain Congratulation Form Or FileString At System Tray    AND    fswin_Close Congratulation Form If Exist
+    Comment    Quit App from tast manager
+    fswin_Close FileString From Task Manager
+    Comment    Hover mouse at system tray to make sure it has been killed
+    fswin_Hover Mouse In FS Icon At System Tray
+    Comment    Verify FS application icon is not at system tray
+    fswin_Verify FileString Icon Is Not At System Tray
+    [Teardown]    Run Keywords    fswin_Capture Screen Shoot If Fail    AND    Report Test Status    AND    fswin_Start Application
+    ...    ${v_pathToApplicationOnMachine1}    AND    Sleep    5s    AND    fswin_Verify FileString Icon At System Tray And Unlink
+    ...    AND    fswin_Quit Application

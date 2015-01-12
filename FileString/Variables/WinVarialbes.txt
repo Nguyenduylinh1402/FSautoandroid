@@ -1,0 +1,22 @@
+*** Settings ***
+Library           Collections
+Variables         ../GUIMAP/Windows/ObjectRepositories.py
+Library           ImapLibrary
+Library           robotmail
+
+*** Variables ***
+${v_pathToApplicationOnMachine1}    C:\\Program Files (x86)\\FileString\\FileString.exe    # C:\\Program Files (x86)\\FileString\\FileString.exe
+${v_pathToApplicationOnMachine2}    C:\\Program Files (x86)\\FileString\\FileString.exe
+${v_timeOutInWindows}    15000    # 15 seconds
+${v_isDebug}      ${True}
+${v_pathToAccountInExcelFile}    ${CURDIR}/../DataSet/AllAccounts.xlsx
+${v_pathToBuildFolder}    D:\\FWIN_BUILDS    # ${CURDIR}/../Application
+${v_isDiableMouseAndKeyboardWhileRunning}    ${True}
+${v_pathToSettingsFile}    ${CURDIR}/../DataSet/Windows/Settings.xlsx
+${v_ipPortMachine2}    192.168.1.115:8270
+${v_libNameMachine2}    machine2
+${v_databaseSource}    yxgx5mqv7u.database.windows.net
+${v_databaseName}    FileString_Staging
+${v_databaseUsername}    storycloud@yxgx5mqv7u
+${v_databaseUserPassword}    NasdfsdfVDADasd3325673
+${v_syncedLoop}    300

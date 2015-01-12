@@ -1,0 +1,27 @@
+*** Settings ***
+Library           Process
+
+*** Keywords ***
+fswin_Start Ranorex Remote Library
+    ${v_processIDOfRanorexRemoteLibrary}=    Process.Start Process    ipy.exe    ${CURDIR}/../../Tool/Rx/rxconnector.py
+    Set Global Variable    ${v_processIDOfRanorexRemoteLibrary}
+    Sleep    10s
+
+fswin_Click On Continue Evaluation Button
+    #    Start Sikuli Remote Library
+    fswin_Start Sikuli Remote Library
+    #    Import sikuli remote library
+    Import Library    Remote    argument
+    #    Using sikuli, click on continue Evaluation button
+    #    Stop sikuli remote library
+    fswin_Stop Sikuli Remote Library
+
+fswin_Stop Ranorex Remote Library
+    Terminate Process    ${v_processIDOfRanorexRemoteLibrary}
+
+fswin_Start Sikuli Remote Library
+    ${v_processIDOfSikuliRemoteLibrary}=    Process.Start Process    ipy.exe    ${CURDIR}/../../Tool/Rx/rxconnector.py
+    Set Global Variable    ${v_processIDOfSikuliRemoteLibrary}
+
+fswin_Stop Sikuli Remote Library
+    Terminate Process    ${v_processIDOfSikuliRemoteLibrary}

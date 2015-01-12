@@ -1,0 +1,90 @@
+*** Settings ***
+Library           openpyxl
+Library           String
+Library           Collections
+Resource          TestlinkResources.txt
+
+*** Keywords ***
+fs_loadDataFromFile
+    [Arguments]    ${v_pathToDataFile}
+    ${v_wb}=    Load Workbook    ${v_pathToDataFile}
+    ${v_ws}=    Set Variable    ${v_wb.get_active_sheet()}
+    Comment    Check header
+    ${v_testcaseName}=    Split String    ${TEST_NAME}    _
+    : FOR    ${v_column}    IN RANGE    1    500
+    \    ${v_cell}=    Set Variable    ${v_ws.cell(row=1,column=${v_column})}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    None
+    \    Run Keyword If    ${v_result}==True    Fail    Can't find testcase name in data file
+    \    ${v_isExit}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    ${v_testcaseName[1]}
+    \    Exit For Loop If    ${v_isExit}==True
+    Comment    Get all data in current column
+    ${v_data}=    Create List
+    : FOR    ${v_index}    IN RANGE    2    10000
+    \    ${v_cell}=    Set Variable    ${v_ws.cell(row=${v_index},column=${v_column})}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    None
+    \    Exit For Loop If    ${v_result}==True
+    \    ${v_value}=    Set Variable    ${v_cell.value}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be String    ${v_value}
+    \    ${v_value}=    Run Keyword If    ${v_result}==False    Evaluate    str(${v_value})    ELSE
+    \    ...    Set Variable    ${v_value}
+    \    Append To List    ${v_data}    ${v_value}
+    Set Test Variable    ${v_data}    ${v_data}
+
+fs_loadCustomColumnFromCustomFile
+    [Arguments]    ${v_pathToDataFile}    ${v_column}
+    ${v_wb}=    Load Workbook    ${v_pathToDataFile}
+    ${v_ws}=    Set Variable    ${v_wb.get_active_sheet()}
+    Comment    Check header
+    ${v_testcaseName}=    Split String    ${TEST_NAME}    _
+    Comment    Get all data in current column
+    ${v_data}=    Create List
+    : FOR    ${v_index}    IN RANGE    2    10000
+    \    ${v_cell}=    Set Variable    ${v_ws.cell('${v_column}${v_index}')}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    None
+    \    Exit For Loop If    ${v_result}==True
+    \    ${v_value}=    Set Variable    ${v_cell.value}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be String    ${v_value}
+    \    ${v_value}=    Run Keyword If    ${v_result}==False    Evaluate    str(${v_value})    ELSE
+    \    ...    Set Variable    ${v_value}
+    \    Append To List    ${v_data}    ${v_value}
+    [Return]    ${v_data}
+
+fs_loadDataFromFileNewVersion
+    [Arguments]    ${v_pathToDataFile}
+    Comment    Get sheet name (=testcase ID) from testcase name
+    ${v_sheetName}=    Get Test Case ID From Test Name    ${TEST_NAME}
+    Comment    Load data from file
+    ${v_wb}=    Load Workbook    ${v_pathToDataFile}
+    ${v_ws}=    Set Variable    ${v_wb.get_sheet_by_name('${v_sheetName}')}
+    Run Keyword If    '${v_ws}'=='None'    Fail    Your testcase ID: ${v_sheetName} is not exist in data file
+    Comment    Get all data in cloumn A
+    ${v_data}=    Create List
+    : FOR    ${v_index}    IN RANGE    1    50000
+    \    ${v_cell}=    Set Variable    ${v_ws.cell('A${v_index}')}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    None
+    \    Exit For Loop If    ${v_result}==True
+    \    ${v_value}=    Set Variable    ${v_cell.value}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be String    ${v_value}
+    \    ${v_value}=    Run Keyword If    ${v_result}==False    Evaluate    str(${v_value})    ELSE
+    \    ...    Set Variable    ${v_value}
+    \    Append To List    ${v_data}    ${v_value}
+    Set Test Variable    ${v_data}    ${v_data}
+    [Return]    ${v_data}
+
+fs_loadDataInFirstSheet
+    [Arguments]    ${v_pathToDataFile}
+    ${v_wb}=    Load Workbook    ${v_pathToDataFile}
+    ${v_ws}=    Set Variable    ${v_wb.worksheets[0]}
+    Comment    Get all data in current column
+    ${v_data}=    Create List
+    : FOR    ${v_index}    IN RANGE    1    10000
+    \    ${v_cell}=    Set Variable    ${v_ws.cell('A${v_index}')}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    None
+    \    Exit For Loop If    ${v_result}==True
+    \    ${v_value}=    Set Variable    ${v_cell.value}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be String    ${v_value}
+    \    ${v_value}=    Run Keyword If    ${v_result}==False    Evaluate    str(${v_value})    ELSE
+    \    ...    Set Variable    ${v_value}
+    \    Append To List    ${v_data}    ${v_value}
+    Set Suite Variable    ${v_dataInFirstSheet}    ${v_data}
+    [Return]    ${v_data}
