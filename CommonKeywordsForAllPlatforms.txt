@@ -1,0 +1,43 @@
+*** Settings ***
+Library           openpyxl
+Library           String
+Library           Collections
+Resource          TestlinkResources.txt
+
+*** Keywords ***
+fs_loadDataFromFileNewVersion
+    [Arguments]    ${v_pathToDataFile}
+    [Documentation]    1. Your test script must have format: fs[your-test-scipt-id]_your-test-script-name
+    ...
+    ...    2. In your excel file, you must put your id into SHEET NAME
+    ...
+    ...    This keyword will load all data in first column (column A) and assign it into a suite variable named ${v_data}
+    ...
+    ...    For example
+    ...    In your excel file
+    ...    | No. | A | B |
+    ...    | 1 | testingaccount4@yopmail.com | username |
+    ...    | 2 | 1234 | password |
+    ...
+    ...    => In your variable:
+    ...    ${v_data[0]} = testingaccount4@yopmail.com
+    ...    ${v_data[1]} = 1234
+    Comment    Get sheet name (=testcase ID) from testcase name
+    ${v_sheetName}=    Get Test Case ID From Test Name    ${TEST_NAME}
+    Comment    Load data from file
+    ${v_wb}=    Load Workbook    ${v_pathToDataFile}
+    ${v_ws}=    Set Variable    ${v_wb.get_sheet_by_name('${v_sheetName}')}
+    Run Keyword If    '${v_ws}'=='None'    Fail    Your testcase ID: ${v_sheetName} is not exist in data file
+    Comment    Get all data in cloumn A
+    ${v_data}=    Create List
+    : FOR    ${v_index}    IN RANGE    1    50000
+    \    ${v_cell}=    Set Variable    ${v_ws.cell('A${v_index}')}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be Equal As Strings    ${v_cell.value}    None
+    \    Exit For Loop If    ${v_result}==True
+    \    ${v_value}=    Set Variable    ${v_cell.value}
+    \    ${v_result}=    Run Keyword And Return Status    Should Be String    ${v_value}
+    \    ${v_value}=    Run Keyword If    ${v_result}==False    Evaluate    str(${v_value})    ELSE
+    \    ...    Set Variable    ${v_value}
+    \    Append To List    ${v_data}    ${v_value}
+    Set Test Variable    ${v_data}    ${v_data}
+    [Return]    ${v_data}

@@ -6,9 +6,10 @@ Library           AppiumLibrary
 fs[1234]_Sign up with valid email never sign up before and password
     fs_loadDataFromFileNewVersion    ${CURDIR}/Data.xlsx
     fsand_OpenFileStringApplication
+    #    Close What's New
     #    fsand_ClickUp    sta25.114@yopmail.com
     #    Del User on DataBase
-    fsand_Delete User Information In Database    ${v_data[2]}
+    #    fsand_Delete User Information In Database    ${v_data[2]}
     #    Change environment
     fsand_ChangeEnvironment    Staging
     #    Click Sign Up Now to move to Sign Up form
@@ -30,32 +31,32 @@ fs[1234]_Sign up with valid email never sign up before and password
     #    Click OK button
     fsand_ClickPositiveButton
 
-Sign up with Secondary email but not verify
+fs[0002]_Sign up with Secondary email but not verify
 
-Email has "space" in first and end letter
+fs[0003]Email has "space" in first and end letter
 
-Long First name, Last name (<= 128 characters)
+fs[0004]Long First name, Last name (<= 128 characters)
 
-Password has special characters
+fs[0005]Password has special characters
 
-Empty any value
+fs[0006]Empty any value
     [Setup]    fsand_Navigate To Sign Up Screen
     fsand_Input Email Address_Sign Up
     fsand_Input Password_Sign Up
 
-Invalid Email
+fs[0007]Invalid Email
 
-Password < 4 & > 36 character
+fs[0008]Password < 4 & > 36 character
 
-First name, Last name ( > 128 characters)
+fs[0009]First name, Last name ( > 128 characters)
 
-Email signed up before
+fs[0010]Email signed up before
 
-Email is secondary email already
+fs[0011]Email is secondary email already
 
-First name, last name has pecial character: < > ? : " | * \ /
+fs[0012]First name, last name has pecial character: < > ? : " | * \ /
 
-Without network
+fs[0013]Without network
 
 asd
     fsand_Delete User Information In Database    sta25.114@yopmail.com

@@ -46,15 +46,7 @@ OK_Button = "id=com.filestring.lattedouble:id/dlg_btn_positive"
 @Date Created: Jan 07, 2015
 @Description: Back, Home Action
 """
-Action_Up = "id=android:id/up"
-Action_Home = "id=android:id/home"
-
-#Title
-Title_SignUp_VerifyEmail = "Verify your email address"
-
-#Message
-Message_SignUp_VerifyEmail = "Look out for the verification email from FileString and follow instructions in the email."
-
+Action_Back_Hamberger = "id=android:id/up"
 
 
 

@@ -39,3 +39,10 @@ fsand_Delete User Information In Database
     Comment    #    Delete 4: from [User] table
     Comment    Run Keyword And Ignore Error    DatabaseLibrary.Execute Sql String    DELETE FROM [User] WHERE Username='${v_emailAddress}'
     Comment    DatabaseLibrary.Disconnect From Database
+
+fsand_Fill All Value Sign Up
+    [Arguments]    ${v_firstName}    ${v_lastName}    ${v_emailAddress}    ${v_password}
+    fsand_Input First Name    ${v_firstName}
+    fsand_Input Last Name    ${v_lastName}
+    fsand_Input Email Address_Sign Up    ${v_emailAddress}
+    fsand_Input Password_Sign Up    ${v_password}
